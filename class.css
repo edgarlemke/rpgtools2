@@ -1,0 +1,37 @@
+div.classes-container {
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: 20% 20% 20% 20% 20%; 
+	gap: 0;
+}
+
+div.class-container {
+	border: solid 1px black;
+	padding: 15px;
+}
+
+div.class-name {
+	font-weight: bold;
+}
+
+div.class-container div {
+	margin: 15px;
+}
+
+div.class-description {
+	text-align: justify;
+	height: 100px;
+	overflow: scroll;
+	border: solid 1px black;
+	padding: 15px;
+}
+
+div.class-stats table {
+	margin: 0 auto;
+}
+
+div.class-stats table.stats th,
+div.class-stats table.stats td {
+	padding: 5px;
+	min-width: 100px;
+}

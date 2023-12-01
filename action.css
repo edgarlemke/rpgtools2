@@ -1,0 +1,27 @@
+div.actions-container {
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: 20% 20% 20% 20% 20%; 
+	gap: 0;
+}
+
+div.action-container {
+	border: solid 1px black;
+	padding: 15px;
+}
+
+div.action-name {
+	font-weight: bold;
+}
+
+div.action-container div {
+	margin: 15px;
+}
+
+div.action-description {
+	text-align: justify;
+	height: 100px;
+	overflow: scroll;
+	border: solid 1px black;
+	padding: 15px;
+}

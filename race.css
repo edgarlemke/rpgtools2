@@ -1,0 +1,41 @@
+div.races-container {
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: 20% 20% 20% 20% 20%; 
+	gap: 0;
+}
+
+div.race-container {
+	border: solid 1px black;
+	padding: 15px;
+}
+
+div.race-name {
+	font-weight: bold;
+}
+
+div.race-container div {
+	margin: 15px;
+}
+
+div.race-description {
+	text-align: justify;
+	height: 100px;
+	overflow: scroll;
+	border: solid 1px black;
+	padding: 15px;
+}
+
+div.race-has-class {
+	font-weight: bold;
+}
+
+div.race-stats table {
+	margin: 0 auto;
+}
+
+div.race-stats table.stats th,
+div.race-stats table.stats td {
+	padding: 5px;
+	min-width: 100px;
+}

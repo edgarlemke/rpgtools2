@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Clash of Desires</title>
+		<meta charset="utf8" />
+
+		<link rel="stylesheet" href="main.css"/>
+		<link rel="stylesheet" href="race.css"/>
+		<link rel="stylesheet" href="class.css"/>
+		<link rel="stylesheet" href="item.css"/>
+		<link rel="stylesheet" href="action.css"/>
+		<link rel="stylesheet" href="char.css"/>
+	</head>
+	<body>
+		<div id="main-container">
+			<header>
+				<h1>Clash of Desires</h1>
+			</header>
+			<nav>
+				<ul>
+					<li onclick="Content.show('races')">Races</li>
+					<li onclick="Content.show('classes')">Classes</li>
+					<li onclick="Content.show('items')">Items</li>
+					<li onclick="Content.show('actions')">Actions</li>
+					<li onclick="Content.show('chars')">Chars</li>
+					<li onclick="Content.show('combats')">Combats</li>
+					<li onclick="Content.show('backup')">Backup</li>
+				</ul>
+			</nav>
+			<section id="content-container">
+			</section>
+		</div>
+
+		<script type="text/javascript" src="main.js"></script>
+		<script type="text/javascript" src="content.js"></script>
+		<script type="text/javascript" src="stats.js"></script>
+		<script type="text/javascript" src="race.js"></script>
+		<script type="text/javascript" src="class.js"></script>
+		<script type="text/javascript" src="item.js"></script>
+		<script type="text/javascript" src="weapon.js"></script>
+		<script type="text/javascript" src="defense.js"></script>
+		<script type="text/javascript" src="ammo.js"></script>
+		<script type="text/javascript" src="generic.js"></script>
+		<script type="text/javascript" src="drug.js"></script>
+		<script type="text/javascript" src="action.js"></script>
+		<script type="text/javascript" src="attack.js"></script>
+		<script type="text/javascript" src="char.js"></script>
+		<script type="text/javascript" src="combat.js"></script>
+		<script type="text/javascript" src="backup.js"></script>
+
+		<script type="text/javascript">
+			new Content("items", Item.get_html())
+			new Content("actions", Action.get_html())
+
+			fill_select(document.getElementById("char-race"), Object.keys(Race.objs))
+			fill_select(document.getElementById("char-class"), Object.keys(Class.objs))
+			fill_select(document.getElementById("char-primary-motivation"), Char.motivations)
+
+			fill_select(document.getElementById("char-virtue-0"), Char.virtues)
+			fill_select(document.getElementById("char-virtue-1"), Char.virtues)
+			fill_select(document.getElementById("char-virtue-2"), Char.virtues)
+
+			fill_select(document.getElementById("char-defect-0"), Char.defects)
+			fill_select(document.getElementById("char-defect-1"), Char.defects)
+			fill_select(document.getElementById("char-defect-2"), Char.defects)
+
+			CharView.race.onchange()
+			CharView.class_.onchange()
+		</script>
+
+	</body>
+</html>
