@@ -12,6 +12,7 @@ header {
 
 nav {
 	padding: 0;
+	margin-bottom: 15px;
 }
 
 nav ul {
@@ -29,6 +30,11 @@ nav li {
 	cursor: pointer;
 }
 
+nav li.selected {
+	background-color: black;
+	color: white;
+}
+
 section#content {
 	border: solid 1px black;
 	margin: 15px;
@@ -44,5 +50,5 @@ tr, th, td {
 }
 
 .hidden {
-	display: none;
+	display: none !important;
 }

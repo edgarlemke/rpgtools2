@@ -39,14 +39,15 @@ class Item {
 		return html
 	}
 
-	constructor (name, description, weight, stacking, buildable, made_of, price, level, use_class, build_class /*, equip_slot*/) {
-		//console.log("Item constructor: " + name)
+	constructor (name, description, weight, stacking, equippable, buildable, made_of, price, level, use_class, build_class /*, equip_slot*/) {
+		// console.log("Item constructor: " + name)
 
 		Item.objs[name] = this
 		this.name = name
 		this.description = description
 		this.weight = weight
 		this.stacking = stacking
+		this.equippable = equippable
 		this.buildable = buildable
 		this.made_of = made_of
 		this.price = price
@@ -64,6 +65,8 @@ class Item {
 
 			this.weight = 0
 			Object.keys(this.made_of).forEach((key) => {
+				// console.log(key)
+
 				let quantity = this.made_of[key]
 				let item_obj = Item.objs[key]
 				for (let i = 0; i < quantity; i++) {

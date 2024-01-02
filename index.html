@@ -5,26 +5,31 @@
 		<meta charset="utf8" />
 
 		<link rel="stylesheet" href="main.css"/>
+		<link rel="stylesheet" href="modal.css"/>
 		<link rel="stylesheet" href="race.css"/>
 		<link rel="stylesheet" href="class.css"/>
 		<link rel="stylesheet" href="item.css"/>
 		<link rel="stylesheet" href="action.css"/>
 		<link rel="stylesheet" href="char.css"/>
+		<link rel="stylesheet" href="inventory.css"/>
+		<link rel="stylesheet" href="combat.css"/>
 	</head>
 	<body>
 		<div id="main-container">
 			<header>
 				<h1>Clash of Desires</h1>
 			</header>
-			<nav>
+			<nav id="main-nav">
 				<ul>
-					<li onclick="Content.show('races')">Races</li>
-					<li onclick="Content.show('classes')">Classes</li>
-					<li onclick="Content.show('items')">Items</li>
-					<li onclick="Content.show('actions')">Actions</li>
-					<li onclick="Content.show('chars')">Chars</li>
-					<li onclick="Content.show('combats')">Combats</li>
-					<li onclick="Content.show('backup')">Backup</li>
+					<li onclick="Content.show('races', this)">Races</li>
+					<li onclick="Content.show('classes', this)">Classes</li>
+					<li onclick="Content.show('items', this)">Items</li>
+					<li onclick="Content.show('actions', this)">Actions</li>
+					<li onclick="Content.show('chars', this)">Chars</li>
+					<li onclick="Content.show('inventory', this)">Inventory</li>
+					<li onclick="Content.show('combats', this)">Combats</li>
+					<li onclick="Content.show('test', this)">Test</li>
+					<li onclick="Content.show('backup', this)">Backup</li>
 				</ul>
 			</nav>
 			<section id="content-container">
@@ -32,20 +37,24 @@
 		</div>
 
 		<script type="text/javascript" src="main.js"></script>
+		<script type="text/javascript" src="modal.js"></script>
 		<script type="text/javascript" src="content.js"></script>
 		<script type="text/javascript" src="stats.js"></script>
 		<script type="text/javascript" src="race.js"></script>
 		<script type="text/javascript" src="class.js"></script>
 		<script type="text/javascript" src="item.js"></script>
+		<script type="text/javascript" src="generic.js"></script>
 		<script type="text/javascript" src="weapon.js"></script>
 		<script type="text/javascript" src="defense.js"></script>
 		<script type="text/javascript" src="ammo.js"></script>
-		<script type="text/javascript" src="generic.js"></script>
 		<script type="text/javascript" src="drug.js"></script>
 		<script type="text/javascript" src="action.js"></script>
 		<script type="text/javascript" src="attack.js"></script>
+		<script type="text/javascript" src="badge.js"></script>
 		<script type="text/javascript" src="char.js"></script>
+		<script type="text/javascript" src="inventory.js"></script>
 		<script type="text/javascript" src="combat.js"></script>
+		<script type="text/javascript" src="test.js"></script>
 		<script type="text/javascript" src="backup.js"></script>
 
 		<script type="text/javascript">

@@ -67,7 +67,10 @@ class Char {
 		"Inconsequential"
 	]
 
-	constructor (name, age, level, race, class_, primary_motivation, secondary_motivations, virtues, defects, inventory_obj, total_action_points) {
+	static base_health_points = 0
+	static health_points_per_level = 100
+
+	constructor (name, age, level, race, class_, primary_motivation, secondary_motivations, virtues, defects, player_stats_obj, story, actions_obj) {
 		Char.objs[name] = this
 
 		this.name = name
@@ -76,46 +79,236 @@ class Char {
 		this.race = race
 		this.class = class_
 		this.primary_motivation = primary_motivation
-		this.secondary_motivation = secondary_motivation
+		this.secondary_motivations = secondary_motivations
 		this.virtues = virtues
 		this.defects = defects
-		this.inventory_obj = inventory_obj
-		inventory_obj.char_obj = this
+		this.story = story
 
-		this.action_points = {
-			total : total_action_points,
-			free : 0
-		}
+		this.stats_objs = {}
+		this.stats_objs.player = player_stats_obj
+		this.stats_objs.base = this.get_base_stats_obj()
+		this.stats_objs.current = {... this.stats_objs.base}
+
+		this.aptitudes = {}
+		this.resistances = {}
+
+		Attack.damage_types.forEach((damage_type) => {
+			this.aptitudes[damage_type] = 0
+			this.resistances[damage_type] = 0
+		})
+
+		this.actions_obj = actions_obj
+
+		this.health = {}
+		this.health.base = Char.base_health_points + (level * Char.health_points_per_level)
+		this.health.current = this.health.base
+
+		this.inventory_obj = new Inventory(this)
 	}
+
+	get_base_stats_obj () {
+		const race_obj = Race.objs[this.race]
+		const race_stats_obj = race_obj.stats_obj
+		const class_stats_obj = race_obj.has_class ? Class.objs[this.class].stats_obj : new Stats(0, 0, 0, 0, 0)
+		const base_stats_obj = new Stats(0, 0, 0, 0, 0)
+
+		Object.keys(base_stats_obj).forEach((key) => {
+			base_stats_obj[key] = race_stats_obj[key] + class_stats_obj[key] + this.stats_objs.player[key]
+		})
+
+		return base_stats_obj
+	}
+
+	get_highest_stats () {
+		const curr = this.stats_objs.current
+		const orderly = {}
+
+		Object.keys(curr).forEach((hability) => {
+			const value = curr[hability]
+
+			if (!Object.keys(orderly).includes(value)) {
+				orderly[value] = []
+			}
+
+			orderly[value].push(hability)
+		})
+		// console.log(orderly)
+
+		const max = Object.keys(orderly).reverse()[0]
+		const highest_stats = orderly[max]
+
+		// console.log('highest_stats')
+		// console.log(highest_stats)
+
+		return highest_stats
+	}
+
+	static actions_points = 10
+	static random (name, age, level) {
+		name = name ? name : Char._get_random_name()
+
+		age = age ? age : dice(10000)
+		level = level ? level : dice(10)
+
+		const race_index = dice(Object.keys(Race.objs).length) - 1
+		const race_name = Object.keys(Race.objs)[race_index]
+		const race_obj = Race.objs[race_name]
+
+		let class_ = null
+		if (race_obj.has_class) {
+			const class_index = dice(Object.keys(Class.objs).length) - 1
+			const class_name = Object.keys(Class.objs)[class_index]
+			const class_obj = Class.objs[class_name]
+			class_ = class_name
+		}
+
+		// const class_ = race_obj.has_class ? Class.objs[ dice(Object.keys(Class.objs).length) - 1 ].name : null
+		// const class_ = race_obj.has_class ? class_name : null
+
+		const primary_motivation = Char.motivations[ dice(Char.motivations.length) - 1 ] 
+
+		const virtues = []
+		for (let i = 0; i < 3; i++) {
+			virtues.push( Char.virtues[ dice(Char.virtues.length) - 1 ] )
+		}
+
+		const defects = []
+		for (let i = 0; i < 3; i++) {
+			defects.push( Char.defects[ dice(Char.defects.length) - 1 ] )
+		}
+
+		const player_stats_obj = Stats.get_random(level)
+
+		const char_actions_names = Char._get_char_actions(level, race_name, class_)
+
+		const actions_obj = {
+			total_points : (level * Char.actions_points) + dice(10) - 1,
+			actions_levels : {}
+		}
+
+		// sort out actions+slots and action upgrades
+		if (char_actions_names.length > 0) {
+			//console.log(actions_obj.total_points)
+
+			for (let i = 0; i < actions_obj.total_points;) {
+				//console.log('i: ' + i)
+
+				const keys = Object.keys(actions_obj.actions_levels)
+	
+				// taking an action+slot is an option if not all actions have been taken and if we have at least 2 action points
+				let not_all_actions_taken = keys.length < char_actions_names.length
+				let have_2_action_points = i < (actions_obj.total_points - 2)
+	
+				let action_is_option = not_all_actions_taken && have_2_action_points
+	
+				// taking a upgrade is an option if some action+slot have been taken
+				let upgrade_is_option = keys.length > 0
+	
+				if (action_is_option && upgrade_is_option) {
+					if (dice(2) == 1) {
+						upgrade_is_option = false
+					}
+					else {
+						action_is_option = false
+					}
+				}
+	
+				if (action_is_option) {
+					//console.log(char_actions_names)
+
+					// seek an action that have not already been taken
+					let action_index = null
+					let action = null
+					while (true) {
+						action_index = dice(char_actions_names.length) - 1
+						action = char_actions_names[action_index]
+
+						if (!Object.keys(actions_obj.actions_levels).includes(action)) {
+							break
+						}
+					}
+					actions_obj.actions_levels[action] = 1
+					i += 2
+
+					//console.log('taking action ' + action + ' action_index ' + action_index)
+				}
+				else if (upgrade_is_option) {
+					const action_index = dice(keys.length) - 1
+					const action = keys[action_index]
+					actions_obj.actions_levels[action] += 1
+					i += 1
+					//console.log('upgrading action ' + action + ' action_index ' + action_index)
+				}
+	
+			}
+		}
+
+		// console.log(actions_obj)
+
+		const char_obj = new Char(name, age, level, race_name, class_, primary_motivation, 'Some secondary motivations', virtues, defects, player_stats_obj, 'Some story', actions_obj)
+
+		return char_obj
+	}
+
+	static _get_random_name () {
+		var names = ['Ash', 'Zig', 'Harley', 'Jesse', 'Kai', 'Quin', 'Remi',
+			'Taylor', 'Val', 'Xerxes', 'Xo', 'Zane', 'Sasha', 'Dani',
+			'Collie', 'Ebany', 'Adri', 'Acha', 'Lavon', 'Ren', 'Aldwin',
+			'Farvardin', 'Revon', 'Darel', 'Galel', 'Dali', 'Raven',
+			'Easton', 'Landry', 'Atlas', 'August', 'Avery', 'Cameron',
+			'Colby', 'Koda', 'Saylor', 'Rowan', 'Kirby', 'Maddox', 'Roxxie',
+			'Sydney', 'Ellison', 'Auden', 'Jude', 'Phoenix', 'Loren',
+			'Kai', 'Lane', 'Nowell', 'Oakley', 'Alex', 'Oliver', 'Jessie',
+
+			'Cornustíbia', 'Alcebíades', 'Jeanecleide', 'Andrileide'
+			]
+
+		return names[dice(names.length)-1] + " " + names[dice(names.length)-1]
+	}
+
+	static _get_char_actions (char_level, char_race, char_class) {
+		return Object.keys(Action.objs).filter((key) => {
+			const action_obj = Action.objs[key]
+			return ((!action_obj.for_all) && (action_obj.char_races.includes(char_race) || action_obj.char_classes.includes(char_class)) && action_obj.char_level <= char_level)
+		})
+	}
+
+
+
 }
 
 
 class CharView {
+	static mode = 'create'
+
 	static get_html () {
 		let html = `
 <div class="char-container">
 
-	<div>
-		<label>Mode</label>
-		<button id="char-mode-create-button" onclick="CharView.set_mode('create')">Create</button>
-		<button id="char-mode-edit-button" onclick="CharView.set_mode('edit')">Edit</butto>
-	</div>
+	<nav>
+		<ul>
+			<li id="char-mode-create-button" onclick="CharView.set_mode('create', this)">Create</li>
+			<li id="char-mode-edit-button" onclick="CharView.set_mode('edit', this)">Edit</li>
+		</ul>
+	</nav>
 
 	<div id="char-random-container">
 		<button onclick="CharView.random()">Random</button>
 	</div>
 
-	<div id="char-selector-container">
-		<select id="char-selector"></select>
-	</div>
-
-	<form onsubmit="CharView.create(event)">
-	
 	<div class="char-div">
 		<table>
 			<tbody>
 				<tr>
-					<td colspan="2">Name <input type="text" id="char-name"/></td>
+					<td colspan="2">
+						<span>Name</span>
+						<div id="char-name-container">
+							<input type="text" id="char-name" />
+						</div>
+						<div id="char-selector-container">
+							<select id="char-selector" onchange="CharView.edit_select_char()"></select>
+						</div>
+					</td>
 				</tr>
 				<tr>
 					<td>Age</td>
@@ -130,8 +323,8 @@ class CharView {
 					<td>Class</td>
 				</tr>
 				<tr>
-					<td><select id="char-race" onchange="CharView.fill_race_stats()"></select></td>
-					<td><select id="char-class" onchange="CharView.fill_class_stats()"></select></td>
+					<td><select id="char-race" onchange="CharView.handle_race_change()"></select></td>
+					<td><select id="char-class" onchange="CharView.handle_class_change()"></select></td>
 				</tr>
 				<tr>
 					<td>Primary Motivation</td>
@@ -156,6 +349,12 @@ class CharView {
 						<select id="char-defect-1"></select><br/>
 						<select id="char-defect-2"></select>
 					</td>
+				</tr>
+				<tr>
+					<td colspan="2">Story</td>
+				</tr>
+				<tr>
+					<td colspan="2"><textarea id="char-story"></textarea></td>
 				</tr>
 			</tbody>
 		</table>
@@ -225,14 +424,13 @@ class CharView {
 		<table id="char-aptitudes-and-resistances">
 			<thead>
 				<tr>
-					<th colspan="12">
-						Aptitutes and Resistances
+					<th colspan="10">
+						Aptitudes and Resistances
 					</th>
 				</tr>
 				<tr>
-					<th>Damage Type</th>
-					<th>APT</th>
-					<th>RES</th>
+
+                    <th></th>
 
 					<th>Damage Type</th>
 					<th>APT</th>
@@ -249,46 +447,9 @@ class CharView {
 			</thead>
 			<tbody>
 				<tr>
-					<td>Air</td>
-					<td></td>
-					<td></td>
+                    <td>Body</td>
 
-					<td>Water</td>
-					<td></td>
-					<td></td>
-
-					<td>Fire</td>
-					<td></td>
-					<td></td>
-
-					<td>Earth</td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>Cheese</td>
-					<td></td>
-					<td></td>
-
-					<td>Psychic</td>
-					<td></td>
-					<td></td>
-
-					<td>Darkness</td>
-					<td></td>
-					<td></td>
-
-					<td>Poison</td>
-					<td></td>
-					<td></td>
-
-				</tr>
-				<tr>
-					<td>Acid</td>
-					<td></td>
-					<td></td>
-
-					<td>Electricity</td>
+					<td>Impact</td>
 					<td></td>
 					<td></td>
 
@@ -296,24 +457,37 @@ class CharView {
 					<td></td>
 					<td></td>
 
-					<td>Impact</td>
+					<td>Cutting</td>
 					<td></td>
 					<td></td>
 				</tr>
 				<tr>
-					<td>Shooting</td>
+                    <td>Mind</td>
+
+					<td>Sociability</td>
 					<td></td>
 					<td></td>
 
-					<td>Throwing</td>
+					<td>Knowledge</td>
 					<td></td>
 					<td></td>
 
-					<td>Explosion</td>
+					<td>Self control</td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+                    <td>Spirit</td>
+
+					<td>Witchcraft</td>
 					<td></td>
 					<td></td>
 
-							<td>Cutting</td>
+					<td>Elemental</td>
+					<td></td>
+					<td></td>
+
+					<td>Invocation</td>
 					<td></td>
 					<td></td>
 				</tr>
@@ -321,32 +495,29 @@ class CharView {
 		</table>
 	</div>
 	
-	<div class="char-div" id="char-inventory-container">
-		<table id="char-inventory">
+	<!--
+	<div class="char-div">
+		<b>Badges</b>
+
+		<table id="char-badges">
 			<thead>
-				<tr><th colspan="2">Inventory</th></tr>
-				<tr><th>Coins</th><th></th></tr>
-				<tr><th>Item</th><th>Quantity</th></tr>
+				<tr>
+					<th>Badge</th>
+					<th></th>
+				</tr>
 			</thead>
-			<tbody>
-			</tbody>
 		</table>
 	</div>
-
-	<div class="char-div">
-		<b>Story</b>
-		<textarea id="char-story"></textarea>
-	</div>
+	-->
 
 	<div class="char-div">
 		<b>Actions</b>
 
 		<div>
-			<b>Action Points:</b>
-			<div style="display: inline;">Total: <div id="char-total-action-points"></div></div>
-            <div style="display: inlien;">Free: <div id="char-free-action-points"></div></div>
+			<div style="display: inline-block;"><b>Action Points:</b></div>
+			<div style="display: inline-block;">Total: <input id="char-total-action-points" type="number" min="0" value="0" onchange="CharView.handle_total_action_points_change()"></div>
+            <div style="display: inline-block;">Free: <div style="display: inline;" id="char-free-action-points"></div></div>
 		</div>
-		<br/>
 		<div>
 			<input type="button" onclick="CharView.add_action_slot()" value="Add slot" />
 		</div>
@@ -354,9 +525,9 @@ class CharView {
 		<table id="char-actions-slots">
 			<thead>
 				<tr>
-					<td>Action</td>
-					<td>Level</td>
-					<td></td>
+					<th>Action</th>
+					<th>Level</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -364,18 +535,15 @@ class CharView {
 		</table>
 	</div>
 
-	<div id="char-create-button-container">
-		<button>Create</button>
-	</div>
+	<button id="char-submit-button" onclick="CharView.submit()">Create</button>
 
-	</form>
 </div>
 `
 
 		return html
 	}
 
-	static set_mode (mode) {
+	static set_mode (mode, li) {
 		switch (mode) {
 			case "create":	
 				CharView._set_mode_create()
@@ -388,61 +556,107 @@ class CharView {
 			default:
 				throw "CharView: Invalid mode: " + mode
 		}
+		CharView.mode = mode
+
+		const ul = li.parentElement
+		for (let i = 0; i < ul.children.length; i++) {
+			const child = ul.children[i]
+			child.classList.remove('selected')
+		}
+		li.classList.add('selected')
 	}
 
 	static _set_mode_create() {
+		CharView.submit_button.innerText = 'Create'
+
 		CharView.random_container.classList.remove("hidden")
-		CharView.create_button_container.classList.remove("hidden")
 		CharView.selector_container.classList.add("hidden")
+		CharView.name_container.classList.remove("hidden")
 	}
 
 	static _set_mode_edit() {
+		CharView.submit_button.innerText = 'Update'
+
 		CharView.random_container.classList.add("hidden")
-		CharView.create_button_container.classList.add("hidden")
 		CharView.selector_container.classList.remove("hidden")
+		CharView.name_container.classList.add("hidden")
 	}
 
-	static create (event) {
-		event.preventDefault()
-
-		const name = CharView.name_.value
-		console.log("CharView.create(): name: " + name)
-
+	static get_data (output) {
+		const name = CharView.mode == 'create' ? CharView.name_.value : CharView.selector.selectedOptions[0].innerText
 		const age = CharView.age.value
-		console.log("CharView.create(): age: " + age)
-
 		const level = CharView.level.value
-		console.log("CharView.create(): level: " + level)
+		const race = CharView.race.selectedOptions[0].innerText
+		const class_ = CharView.class_.selectedOptions[0].innerText
+		const primary_motivation = CharView.primary_motivation.selectedOptions[0].innerText
+		const secondary_motivations = CharView.secondary_motivations.value
 
-		const race = CharView.race.value
-		console.log("CharView.create(): race: " + race)
+		const virtue_0 = CharView.virtue_0.selectedOptions[0].innerText
+		const virtue_1 = CharView.virtue_1.selectedOptions[0].innerText
+		const virtue_2 = CharView.virtue_2.selectedOptions[0].innerText
 
-		const class_ = CharView.class_.value
-		console.log("CharView.create(): class_: " + class_)
+		const defect_0 = CharView.defect_0.selectedOptions[0].innerText
+		const defect_1 = CharView.defect_1.selectedOptions[0].innerText
+		const defect_2 = CharView.defect_2.selectedOptions[0].innerText
 
-		const primary_motivation = CharView.primary_motivation
-		console.log("CharView.create(): primary_motivation: " + primary_motivation)
-
-		const secondary_motivations = CharView.secondary_motivations
-		console.log("CharView.create(): secondary_motivations: " + secondary_motivations)
-
-		const virtue_0 = CharView.virtue_0.value
-		const virtue_1 = CharView.virtue_1.value
-		const virtue_2 = CharView.virtue_2.value
-		console.log("CharView.create(): virtue_0: " + virtue_0)
-		console.log("CharView.create(): virtue_1: " + virtue_1)
-		console.log("CharView.create(): virtue_2: " + virtue_2)
-
-		const defect_0 = CharView.defect_0.value
-		const defect_1 = CharView.defect_1.value
-		const defect_2 = CharView.defect_2.value
-		console.log("CharView.create(): defect_0: " + defect_0)
-		console.log("CharView.create(): defect_1: " + defect_1)
-		console.log("CharView.create(): defect_2: " + defect_2)
+		const player_stats_obj = new Stats(
+			Number( CharView.stat_player_strength.value ),
+			Number( CharView.stat_player_agility.value ),
+			Number( CharView.stat_player_dextrity.value ),
+			Number( CharView.stat_player_intelligence.value ),
+			Number( CharView.stat_player_charisma.value )
+		)
 
 		const story = CharView.story.value
-		console.log("CharView.create(): story: " + story)
 
+		const actions_obj = {
+			total_points : CharView.total_action_points.value,
+			actions_levels : {}
+		}
+		const char_action_rows = document.getElementsByClassName('char-action-row')
+		for (let i = 0; i < char_action_rows.length; i++) {
+			const action_row = char_action_rows[i]
+			const action_name = action_row.children[0].children[0].selectedOptions[0].innerText
+			const action_level = Number( action_row.children[1].children[0].value )
+			actions_obj.actions_levels[action_name] = action_level
+		}
+
+		return [
+			name,
+			age,
+			level,
+			race,
+			class_,
+			primary_motivation,
+			secondary_motivations,
+			[virtue_0, virtue_1, virtue_2],
+			[defect_0, defect_1, defect_2],
+			player_stats_obj,
+			story,
+			actions_obj
+		]
+	}
+
+	static submit () {
+		const data = CharView.get_data()	
+
+		new Char(...data)
+		// new Char(name, age, level, race, class_, primary_motivation, secondary_motivations, [virtue_0, virtue_1, virtue_2], [defect_0, defect_1, defect_2], player_stats_obj, story, actions_obj)
+
+		const name = data[0]
+		if (CharView.mode == 'create') {
+			new Modal('Char created', `Char ${name} created!`)
+		}
+		else if (CharView.mode == 'edit') {
+			new Modal('Char updated', `Char ${name} updated!`)
+		}
+
+		fill_select(CharView.selector, Object.keys(Char.objs))
+		fill_select(CombatView.team_member, Object.keys(Char.objs))
+		fill_select(InventoryView.char_selector, Object.keys(Char.objs))
+		InventoryView.select_char()
+
+		CharView.clear()
 	}
 
 	static _get_race_stats_obj () {
@@ -466,9 +680,18 @@ class CharView {
 	}
 
 	static _get_class_stats_obj () {
-		const class_name = CharView.class_.selectedOptions[0].innerText
-		const class_obj = Class.objs[class_name]
-		const stats_obj = class_obj.stats_obj
+		const race_name = CharView.race.selectedOptions[0].innerText
+		const race_obj = Race.objs[race_name]
+
+		let stats_obj
+		if (race_obj.has_class) {
+			const class_name = CharView.class_.selectedOptions[0].innerText
+			const class_obj = Class.objs[class_name]
+			stats_obj = class_obj.stats_obj
+		}
+		else {
+			stats_obj = new Stats(0, 0, 0, 0, 0)
+		}
 
 		return stats_obj
 	}
@@ -496,7 +719,14 @@ class CharView {
 	}
 
 	static _get_items_stats_obj () {
-		return new Stats(0, 0, 0, 0, 0)
+		if (CharView.mode == 'create') {
+			return new Stats(0, 0, 0, 0, 0)
+		}
+		else if (CharView.mode == 'edit') {
+			const char_name = CharView.selector.selectedOptions[0].innerText
+			const stats = Char.objs[char_name].inventory_obj.get_stats()		
+			return stats
+		}
 	}
 
 	static fill_items_stats () {
@@ -546,31 +776,237 @@ class CharView {
 		})
 	}
 
+	static get_free_action_points () {
+		const total_action_points = Number( CharView.total_action_points.value )
+
+		const action_rows = document.getElementsByClassName('char-action-row')
+
+		let action_objs_ct = 0
+		let action_levels_ct = 0
+		for (let i = 0; i < action_rows.length; i++) {
+			const action_row = action_rows[i]
+			const action_select = action_row.children[0].children[0]
+			const action_name = action_select.selectedOptions[0].innerText
+			action_objs_ct += 2
+
+			const action_level = Number( action_row.children[1].children[0].value )
+			action_levels_ct += action_level - 1
+		}
+
+		const free_action_points = total_action_points - action_objs_ct - action_levels_ct
+
+		return free_action_points
+	}
+
+	static handle_total_action_points_change () {
+		CharView.free_action_points.innerText = CharView.get_free_action_points()
+	}
+
 	static add_action_slot (event) {
+		const free_action_points = CharView.get_free_action_points()
+
+		if (free_action_points < 2) {
+			new Modal('Insufficient action points', 'Insufficient free action points for adding a slot: ' + free_action_points)
+			return
+		}
+
+		if (CharView.mode == 'create') {
+			CharView.free_action_points.innerText = free_action_points - 2
+		}
+		else if (CharView.mode == 'edit') {
+		}	
+
 		const tbody = CharView.actions_slots.tBodies[0]
 
 		const tr = document.createElement("tr")
 
 		const template = `<td><select class="char-action-selector"></select></td>
-	<td><input type="number" class="char-action-level" value="0" min="0"/></td>
+	<td><input type="number" class="char-action-level" value="1" min="1" onchange="CharView.handle_action_level_input(event, this)" /></td>
 	<td><input type="button" value="Remove slot" onclick="CharView.remove_action_slot(this)" /></td>`
 
 		tr.innerHTML = template
+		tr.classList.add('char-action-row')
 		tbody.appendChild(tr)
 
 		const char_actions = CharView._get_char_actions()
 
 		const selectors = document.getElementsByClassName("char-action-selector")
-		for (var i = 0; i < selectors.length; i++) {
-			const selector = selectors[i]
-			fill_select(selector, char_actions)
-		}
+		const selector = selectors[selectors.length - 1]
+		const options = char_actions
+		fill_select(selector, options)
 	}
 
 	static remove_action_slot (button_element) {
 		const tr = button_element.parentElement.parentElement
 		const tbody = tr.parentElement
 		tbody.removeChild(tr)
+
+		if (CharView.mode == 'create') {
+			CharView.free_action_points.innerText = CharView.get_free_action_points()		
+		}
+		else if (CharView.mode == 'edit') {
+		}	
+	}
+
+	static handle_action_level_input (event, input) {
+		const free_action_points = CharView.get_free_action_points()
+		CharView.free_action_points.innerText = free_action_points
+	}
+
+	static handle_race_change () {
+		CharView.fill_race_stats()
+
+		// disable class selector when classless races are chosen
+		const race_name = CharView.race.selectedOptions[0].innerText
+		const race_obj = Race.objs[race_name]
+
+		CharView.class_.disabled = ! race_obj.has_class
+		CharView.fill_class_stats(new Stats(0, 0, 0, 0, 0))
+
+		remove_children(CharView.actions_slots.tBodies[0])
+		CharView.handle_total_action_points_change()
+	}
+
+	static handle_class_change () {
+		CharView.fill_class_stats()
+		remove_children(CharView.actions_slots.tBodies[0])
+		CharView.handle_total_action_points_change()
+	}
+
+	static random () {
+		const data = CharView.get_data()
+
+		const name = data[0]
+		const age = data[1]
+		const level = data[2]
+
+		const char_obj = Char.random(name, age, level)
+		CharView.fill_char(char_obj)
+	}
+
+	static clear () {
+		CharView.name_.value = ''
+		CharView.age.value = 0
+		CharView.level.value = 1
+
+		CharView.race.value = 0
+		CharView.handle_race_change()
+
+		CharView.class_.value = 0
+		CharView.fill_class_stats()
+
+		CharView.primary_motivation.value = 0
+		CharView.secondary_motivations.value = ''
+
+		CharView.virtue_0.value = 0
+		CharView.virtue_1.value = 0
+		CharView.virtue_2.value = 0
+
+		CharView.defect_0.value = 0
+		CharView.defect_1.value = 0
+		CharView.defect_2.value = 0
+
+		CharView.stat_player_strength.value = 0
+		CharView.stat_player_agility.value = 0
+		CharView.stat_player_dextrity.value = 0
+		CharView.stat_player_intelligence.value = 0
+		CharView.stat_player_charisma.value = 0
+
+		CharView.fill_race_stats()
+		CharView.fill_class_stats()
+		CharView.fill_items_stats()
+		CharView.fill_total_stats()
+
+		CharView.story.value = ''
+
+		CharView.total_action_points.value = 0
+
+		remove_children(CharView.actions_slots.tBodies[0])
+	}
+
+	static edit_select_char () {
+		const char_name = CharView.selector.selectedOptions[0].innerText
+		const char_obj = Char.objs[char_name]
+
+		CharView.fill_char(char_obj)
+	}
+
+	static fill_char (char_obj) {
+		CharView.name_.value = char_obj.name
+		CharView.age.value = char_obj.age
+		CharView.level.value = char_obj.level
+
+		// fill up class field before because race may change values in the Stats table
+		CharView.class_.value = char_obj.class ? Object.keys(Class.objs).indexOf(char_obj.class) : 0
+		CharView.fill_class_stats()
+
+		CharView.race.value = Object.keys(Race.objs).indexOf(char_obj.race)
+		CharView.handle_race_change()
+
+		CharView.primary_motivation.value = Char.motivations.indexOf(char_obj.primary_motivation)
+		CharView.secondary_motivations.value = char_obj.secondary_motivations
+
+		CharView.virtue_0.value = Char.virtues.indexOf(char_obj.virtues[0])
+		CharView.virtue_1.value = Char.virtues.indexOf(char_obj.virtues[1])
+		CharView.virtue_2.value = Char.virtues.indexOf(char_obj.virtues[2])
+
+		CharView.defect_0.value = Char.defects.indexOf(char_obj.defects[0])
+		CharView.defect_1.value = Char.defects.indexOf(char_obj.defects[1])
+		CharView.defect_2.value = Char.defects.indexOf(char_obj.defects[2])
+		
+		CharView.stat_player_strength.value = char_obj.stats_objs.player.strength
+		CharView.stat_player_agility.value = char_obj.stats_objs.player.agility
+		CharView.stat_player_dextrity.value = char_obj.stats_objs.player.dextrity
+		CharView.stat_player_intelligence.value = char_obj.stats_objs.player.intelligence
+		CharView.stat_player_charisma.value = char_obj.stats_objs.player.charisma
+
+		CharView.fill_race_stats()
+		CharView.fill_class_stats()
+		CharView.fill_items_stats()
+		CharView.fill_total_stats()
+
+		CharView.story.value = char_obj.story
+
+		CharView.total_action_points.value = char_obj.actions_obj.total_points
+
+		const actions_slots_tbody = CharView.actions_slots.tBodies[0]
+		remove_children(actions_slots_tbody)
+
+		const template = `<td><select class="char-action-selector"></select></td>
+<td><input type="number" class="char-action-level" value="1" min="1" onchange="CharView.handle_action_level_input(event, this)" /></td>
+<td><input type="button" value="Remove slot" onclick="CharView.remove_action_slot(this)" /></td>`
+
+		Object.keys(char_obj.actions_obj.actions_levels).forEach(() => {
+			const tr = document.createElement('tr')
+			tr.innerHTML = template
+			tr.classList.add('char-action-row')
+			actions_slots_tbody.appendChild(tr)
+		})
+
+		const action_selectors = document.getElementsByClassName('char-action-selector')
+		const action_level_inputs = document.getElementsByClassName('char-action-level')
+
+		const char_actions = CharView._get_char_actions()
+		for (var i = 0; i < action_selectors.length; i++) {
+			const selector = action_selectors[i]
+			const options = char_actions
+			fill_select(selector, options)
+		}
+
+
+		for (let i = 0; i < action_selectors.length; i++) {
+			const action_selector = action_selectors[i]
+			const action_level_input = action_level_inputs[i]
+
+			const key = Object.keys(char_obj.actions_obj.actions_levels)[i]
+			const action_level = char_obj.actions_obj.actions_levels[key]
+
+			action_selector.value = i
+			action_level_input.value = action_level
+		}
+
+		CharView.handle_total_action_points_change()
+
 	}
 }
 
@@ -578,7 +1014,8 @@ new Content('chars', CharView.get_html())
 
 CharView.mode_create_button = document.getElementById("char-mode-create-button")
 CharView.random_container = document.getElementById("char-random-container")
-CharView.create_button_container = document.getElementById("char-create-button-container")
+CharView.submit_button = document.getElementById('char-submit-button')
+CharView.name_container = document.getElementById("char-name-container")
 CharView.selector_container = document.getElementById("char-selector-container")
 CharView.name_ = document.getElementById("char-name")
 CharView.age = document.getElementById("char-age")
@@ -629,6 +1066,12 @@ CharView.stat_total_charisma = document.getElementById("char-stat-total-charisma
 CharView.story = document.getElementById("char-story")
 
 CharView.actions_slots = document.getElementById("char-actions-slots")
+CharView.total_action_points = document.getElementById("char-total-action-points")
+CharView.free_action_points = document.getElementById("char-free-action-points")
+
+CharView.aptitudes_and_resistances_container = document.getElementById("char-aptitudes-and-resistances-container")
+
+CharView.selector = document.getElementById("char-selector")
 
 CharView.fill_items_stats()
 

@@ -2,7 +2,7 @@ class Content {
 
 	static objs = {}
 
-	static show(ref) {
+	static show(ref, li) {
 		if (! Object.keys(Content.objs).includes(ref)) {
 			throw "Invalid Content ref: " + ref
 		}
@@ -12,6 +12,12 @@ class Content {
 		})
 		Content.objs[ref].content_div.classList.remove("hidden")
 		
+		const nav_children = li.parentElement.children
+		for (let i = 0; i < nav_children.length; i++) {
+			const child = nav_children[i]
+			child.classList.remove('selected')
+		}
+		li.classList.add('selected')
 	}
 
 	/*

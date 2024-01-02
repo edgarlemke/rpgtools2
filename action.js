@@ -15,7 +15,7 @@ class Action {
 		return html
 	}
 
-	constructor (name, description, difficulty, habilities, char_level, char_races, char_classes, for_all, requires_showing) {
+	constructor (name, description, difficulty, habilities, char_level, char_races, char_classes, for_all, requires_showing, targets_count) {
 		this.name = name
 		this.description = description
 		this.difficulty = difficulty
@@ -26,6 +26,7 @@ class Action {
 		this.for_all = for_all
 		this.requires_showing
 		this.meta_obj = null
+		this.targets_count = targets_count
 
 		Action.objs[name] = this
 	}
@@ -46,8 +47,8 @@ class Action {
 
 }
 
-new Action("Hide", "Allows a player to get out of combat temporarily. It remains hidden until an enemy uses \"Seek\" with success.", 10, null, 0, [], [], true, false)
-new Action("Seek", "Looks for a hidden enemy.", 10, null, 0, [], [], true, true)
+new Action("Hide", "Allows a player to get out of combat temporarily. It remains hidden until an enemy uses \"Seek\" with success.", 10, null, 0, [], [], true, false, 1)
+new Action("Seek", "Looks for a hidden enemy.", 10, null, 0, [], [], true, true, 1)
 
 
 //new Content("actions", Action.get_html())

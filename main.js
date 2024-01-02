@@ -1,8 +1,4 @@
 function fill_select (element, keys) {
-	//console.log(element_id)
-
-	//let element = document.getElementById(element_id)
-	//console.log(element)
 	remove_children(element)
 
 	for (let i = 0; i < keys.length; i++) {
@@ -54,4 +50,9 @@ function remove_children (element) {
 		const child = element.children[i]
 		element.removeChild(child)
 	}
+}
+
+
+function dice (sides= 6) {
+	return Math.floor( Math.random() * (sides) ) + 1
 }

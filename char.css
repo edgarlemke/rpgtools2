@@ -44,3 +44,7 @@ div.char-div {
 input#char-age, input#char-level, input[type="number"] {
 	width: 50px;
 }
+
+button#char-submit-button {
+	margin-top: 25px;
+}

@@ -47,11 +47,11 @@ class Drug {
 }
 
 
-new Drug(new Item("Weed", "A little smokey herb.", 1, 5, false, null, 1, 0, null, null))
-new Drug(new Item("Stimulant", "A little smokey herb.", 1, 5, false, null, 1, 0, null, null))
-new Drug(new Item("Somniferous", "A little smokey herb.", 1, 5, false, null, 1, 0, null, null))
-new Drug(new Item("Hallucinogen", "A little smokey herb.", 1, 5, false, null, 1, 0, null, null))
-new Drug(new Item("Healing Pill", "A little smokey herb.", 1, 5, false, null, 1, 0, null, null))
-new Drug(new Item("Medicine", "A little smokey herb.", 1, 5, false, null, 1, 0, null, null))
-new Drug(new Item("Antidote", "A little smokey herb.", 1, 5, false, null, 1, 0, null, null))
-new Drug(new Item("Milk", "A little smokey herb.", 1, 5, false, null, 1, 0, null, null))
+new Drug(new Item("Weed", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+new Drug(new Item("Stimulant", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+new Drug(new Item("Somniferous", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+new Drug(new Item("Hallucinogen", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+new Drug(new Item("Healing Pill", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+new Drug(new Item("Medicine", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+new Drug(new Item("Antidote", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+//new Drug(new Item("Milk", "A little smokey herb.", 1, 5, false, false, null, 1, 1, null, null))

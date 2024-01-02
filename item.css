@@ -10,7 +10,7 @@ div.item-container {
 	padding: 15px;
 }
 
-div.item-name, div.item-buildable {
+div.item-name, div.item-buildable, div.item-equippable {
 	font-weight: bold;
 }
 

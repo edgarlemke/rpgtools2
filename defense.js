@@ -17,11 +17,14 @@ class Defense {
 		return html
 	}
 
-	constructor (item_obj) {
+	constructor (item_obj, defense_points, damage_type) {
 		this.name = item_obj.name
 		this.item_obj = item_obj
 		item_obj.meta_obj = this
 		Defense.objs[this.name] = this
+
+		this.defense_points = defense_points
+		this.damage_type = damage_type
 	}
 
 	get_html () {
@@ -45,9 +48,9 @@ class Defense {
 }
 
 
-new Defense(new Item("Shield", " ", 1, 5, false, null, 1, 0, null, null))
-new Defense(new Item("Gloves", " ", 1, 5, false, null, 1, 0, null, null))
-new Defense(new Item("Armour", " ", 1, 5, false, null, 1, 0, null, null))
-new Defense(new Item("Pants", " ", 1, 5, false, null, 1, 0, null, null))
-new Defense(new Item("Elm", " ", 1, 5, false, null, 1, 0, null, null))
-new Defense(new Item("Boots", " ", 1, 5, false, null, 1, 0, null, null))
+new Defense(new Item("Shield", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 0}, null, 0, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact"])
+new Defense(new Item("Gloves", " ", null, 1, true, true, {Wood: 0, Material: 2, Metal: 0}, null, 0, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact"])
+new Defense(new Item("Armour", " ", null, 1, true, true, {Wood: 0, Material: 2, Metal: 0}, null, 0, null, null), 2, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact"])
+new Defense(new Item("Elm", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 0}, null, 0, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact"])
+new Defense(new Item("Boots", " ", null, 1, true, true, {Wood: 0, Material: 2, Metal: 0}, null, 0, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact"])
+

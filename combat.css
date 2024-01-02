@@ -1,0 +1,34 @@
+div.combat-container table {
+	margin: 0 auto;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+div.combat-container table td,
+div.combat-container table th {
+	padding: 5px;
+}
+
+section.modal_section {
+	margin: 20px;
+}
+
+section.modal_section h4 {
+	margin: 0;
+}
+
+div.modal_line {
+	display: flex;
+}
+
+div.modal_line div {
+	padding: 5px 0;
+}
+
+div.modal_first_cell {
+	width: 120px;
+}
+
+div.combat-attack-target-result {
+	margin: 15px auto;
+}
