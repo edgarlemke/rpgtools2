@@ -1,0 +1,11 @@
+div.inventory-container {
+}
+
+div.inventory-container table {
+	margin: 0 auto;
+}
+
+div.inventory-container td,
+div.inventory-container th {
+	margin: 5px;
+}
