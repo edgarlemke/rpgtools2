@@ -70,7 +70,7 @@ class Char {
 	static base_health_points = 0
 	static health_points_per_level = 100
 
-	constructor (name, age, level, race, class_, primary_motivation, secondary_motivations, virtues, defects, player_stats_obj, story, actions_obj) {
+	constructor (name, age, level, race, class_, primary_motivation, secondary_motivations, virtues, defects, player_stats_obj, story, aptitudes, resistances, actions_obj) {
 		Char.objs[name] = this
 
 		this.name = name
@@ -89,13 +89,8 @@ class Char {
 		this.stats_objs.base = this.get_base_stats_obj()
 		this.stats_objs.current = {... this.stats_objs.base}
 
-		this.aptitudes = {}
-		this.resistances = {}
-
-		Attack.damage_types.forEach((damage_type) => {
-			this.aptitudes[damage_type] = 0
-			this.resistances[damage_type] = 0
-		})
+		this.aptitudes = aptitudes
+		this.resistances = resistances
 
 		this.actions_obj = actions_obj
 
@@ -179,10 +174,16 @@ class Char {
 
 		const player_stats_obj = Stats.get_random(level)
 
+		const aptitudes = {}
+		Attack.damage_types.forEach((damage_type) => {
+			aptitudes[damage_type.toLowerCase()] = 0
+		})
+		const resistances = {...aptitudes}
+
 		const char_actions_names = Char._get_char_actions(level, race_name, class_)
 
 		const actions_obj = {
-			total_points : (level * Char.actions_points) + dice(10) - 1,
+			total_points : (level * Char.actions_points),
 			actions_levels : {}
 		}
 
@@ -245,7 +246,7 @@ class Char {
 
 		// console.log(actions_obj)
 
-		const char_obj = new Char(name, age, level, race_name, class_, primary_motivation, 'Some secondary motivations', virtues, defects, player_stats_obj, 'Some story', actions_obj)
+		const char_obj = new Char(name, age, level, race_name, class_, primary_motivation, 'Some secondary motivations', virtues, defects, player_stats_obj, 'Some story', aptitudes, resistances, actions_obj)
 
 		return char_obj
 	}
@@ -422,15 +423,17 @@ class CharView {
 
 	<div class="char-div" id="char-aptitudes-and-resistances-container">
 		<table id="char-aptitudes-and-resistances">
+
 			<thead>
 				<tr>
-					<th colspan="10">
-						Aptitudes and Resistances
+					<th colspan="12">
+						Aptitutes and Resistances
 					</th>
 				</tr>
 				<tr>
-
-                    <th></th>
+					<th>Damage Type</th>
+					<th>APT</th>
+					<th>RES</th>
 
 					<th>Damage Type</th>
 					<th>APT</th>
@@ -447,51 +450,77 @@ class CharView {
 			</thead>
 			<tbody>
 				<tr>
-                    <td>Body</td>
+					<td>Air</td>
+					<td><input type="number" id="char-aptitude-air" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-air" min="0" value="0" /></td>
 
-					<td>Impact</td>
-					<td></td>
-					<td></td>
+					<td>Water</td>
+					<td><input type="number" id="char-aptitude-water" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-water" min="0" value="0" /></td>
 
-					<td>Perfuration</td>
-					<td></td>
-					<td></td>
+					<td>Fire</td>
+					<td><input type="number" id="char-aptitude-fire" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-fire" min="0" value="0" /></td>
 
-					<td>Cutting</td>
-					<td></td>
-					<td></td>
+					<td>Earth</td>
+					<td><input type="number" id="char-aptitude-earth" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-earth" min="0" value="0" /></td>
 				</tr>
 				<tr>
-                    <td>Mind</td>
+					<td>Cheese</td>
+					<td><input type="number" id="char-aptitude-cheese" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-cheese" min="0" value="0" /></td>
 
-					<td>Sociability</td>
-					<td></td>
-					<td></td>
-
-					<td>Knowledge</td>
-					<td></td>
-					<td></td>
-
-					<td>Self control</td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-                    <td>Spirit</td>
-
-					<td>Witchcraft</td>
-					<td></td>
-					<td></td>
-
-					<td>Elemental</td>
-					<td></td>
-					<td></td>
+					<td>Psychic</td>
+					<td><input type="number" id="char-aptitude-psychic" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-psychic" min="0" value="0" /></td>
 
 					<td>Invocation</td>
-					<td></td>
-					<td></td>
+					<td><input type="number" id="char-aptitude-invocation" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-invocation" min="0" value="0" /></td>
+
+					<td>Poison</td>
+					<td><input type="number" id="char-aptitude-poison" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-poison" min="0" value="0" /></td>
+
+				</tr>
+				<tr>
+					<td>Acid</td>
+					<td><input type="number" id="char-aptitude-acid" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-acid" min="0" value="0" /></td>
+
+					<td>Electricity</td>
+					<td><input type="number" id="char-aptitude-electricity" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-electricity" min="0" value="0" /></td>
+
+					<td>Perfuration</td>
+					<td><input type="number" id="char-aptitude-perfuration" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-perfuration" min="0" value="0" /></td>
+
+					<td>Impact</td>
+					<td><input type="number" id="char-aptitude-impact" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-impact" min="0" value="0" /></td>
+				</tr>
+				<tr>
+					<td>Shooting</td>
+					<td><input type="number" id="char-aptitude-shooting" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-shooting" min="0" value="0" /></td>
+
+					<td>Throwing</td>
+					<td><input type="number" id="char-aptitude-throwing" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-throwing" min="0" value="0" /></td>
+
+					<td>Explosion</td>
+					<td><input type="number" id="char-aptitude-explosion" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-explosion" min="0" value="0" /></td>
+
+					<td>Cutting</td>
+					<td><input type="number" id="char-aptitude-cutting" min="0" value="0" /></td>
+					<td><input type="number" id="char-resistance-cutting" min="0" value="0" /></td>
 				</tr>
 			</tbody>
+
+
 		</table>
 	</div>
 	
@@ -609,6 +638,62 @@ class CharView {
 
 		const story = CharView.story.value
 
+		const aptitudes = {
+			air: 0,
+			water: 0,
+			fire: 0,
+			earth: 0,
+			cheese: 0,
+			psychic: 0,
+			invocation: 0,
+			poison: 0,
+			acid: 0,
+			electricity: 0,
+			perfuration: 0,
+			impact: 0,
+			shooting: 0,
+			throwing: 0,
+			explosion: 0,
+			cutting: 0,
+		}
+		const resistances = {
+			... aptitudes
+		}
+
+		aptitudes.air = CharView.aptitude_air.value
+		aptitudes.water = CharView.aptitude_water.value
+		aptitudes.fire = CharView.aptitude_fire.value
+		aptitudes.earth = CharView.aptitude_earth.value
+		aptitudes.cheese = CharView.aptitude_cheese.value
+		aptitudes.psychic = CharView.aptitude_psychic.value
+		aptitudes.invocation = CharView.aptitude_invocation.value
+		aptitudes.poison = CharView.aptitude_poison.value
+		aptitudes.acid = CharView.aptitude_acid.value
+		aptitudes.electricity = CharView.aptitude_electricity.value
+		aptitudes.perfuration = CharView.aptitude_perfuration.value
+		aptitudes.impact = CharView.aptitude_impact.value
+		aptitudes.shooting = CharView.aptitude_shooting.value
+		aptitudes.throwing = CharView.aptitude_throwing.value
+		aptitudes.explosion = CharView.aptitude_explosion.value
+		aptitudes.cutting = CharView.aptitude_cutting.value
+
+		resistances.air = CharView.resistance_air.value
+		resistances.water = CharView.resistance_water.value
+		resistances.fire = CharView.resistance_fire.value
+		resistances.earth = CharView.resistance_earth.value
+		resistances.cheese = CharView.resistance_cheese.value
+		resistances.psychic = CharView.resistance_psychic.value
+		resistances.invocation = CharView.resistance_invocation.value
+		resistances.poison = CharView.resistance_poison.value
+		resistances.acid = CharView.resistance_acid.value
+		resistances.electricity = CharView.resistance_electricity.value
+		resistances.perfuration = CharView.resistance_perfuration.value
+		resistances.impact = CharView.resistance_impact.value
+		resistances.shooting = CharView.resistance_shooting.value
+		resistances.throwing = CharView.resistance_throwing.value
+		resistances.explosion = CharView.resistance_explosion.value
+		resistances.cutting = CharView.resistance_cutting.value
+
 		const actions_obj = {
 			total_points : CharView.total_action_points.value,
 			actions_levels : {}
@@ -633,6 +718,8 @@ class CharView {
 			[defect_0, defect_1, defect_2],
 			player_stats_obj,
 			story,
+			aptitudes,
+			resistances,
 			actions_obj
 		]
 	}
@@ -651,7 +738,7 @@ class CharView {
 			new Modal('Char updated', `Char ${name} updated!`)
 		}
 
-		fill_select(CharView.selector, Object.keys(Char.objs))
+		fill_select(CharView.selector, ['', ...Object.keys(Char.objs)])
 		fill_select(CombatView.team_member, Object.keys(Char.objs))
 		fill_select(InventoryView.char_selector, Object.keys(Char.objs))
 		InventoryView.select_char()
@@ -881,6 +968,7 @@ class CharView {
 		const level = data[2]
 
 		const char_obj = Char.random(name, age, level)
+
 		CharView.fill_char(char_obj)
 	}
 
@@ -918,6 +1006,40 @@ class CharView {
 		CharView.fill_total_stats()
 
 		CharView.story.value = ''
+
+		CharView.aptitude_air.value = 0
+		CharView.aptitude_water.value = 0
+		CharView.aptitude_fire.value = 0
+		CharView.aptitude_earth.value = 0
+		CharView.aptitude_cheese.value = 0
+		CharView.aptitude_psychic.value = 0
+		CharView.aptitude_invocation.value = 0
+		CharView.aptitude_poison.value = 0
+		CharView.aptitude_acid.value = 0
+		CharView.aptitude_electricity.value = 0
+		CharView.aptitude_perfuration.value = 0
+		CharView.aptitude_impact.value = 0
+		CharView.aptitude_shooting.value = 0
+		CharView.aptitude_throwing.value = 0
+		CharView.aptitude_explosion.value = 0
+		CharView.aptitude_cutting.value = 0
+
+		CharView.resistance_air.value = 0
+		CharView.resistance_water.value = 0
+		CharView.resistance_fire.value = 0
+		CharView.resistance_earth.value = 0
+		CharView.resistance_cheese.value = 0
+		CharView.resistance_psychic.value = 0
+		CharView.resistance_invocation.value = 0
+		CharView.resistance_poison.value = 0
+		CharView.resistance_acid.value = 0
+		CharView.resistance_electricity.value = 0
+		CharView.resistance_perfuration.value = 0
+		CharView.resistance_impact.value = 0
+		CharView.resistance_shooting.value = 0
+		CharView.resistance_throwing.value = 0
+		CharView.resistance_explosion.value = 0
+		CharView.resistance_cutting.value = 0
 
 		CharView.total_action_points.value = 0
 
@@ -966,6 +1088,41 @@ class CharView {
 		CharView.fill_total_stats()
 
 		CharView.story.value = char_obj.story
+
+		CharView.aptitude_air.value = char_obj.aptitudes.air
+		CharView.aptitude_water.value = char_obj.aptitudes.water
+		CharView.aptitude_fire.value = char_obj.aptitudes.fire
+		CharView.aptitude_earth.value = char_obj.aptitudes.earth
+		CharView.aptitude_cheese.value = char_obj.aptitudes.cheese
+		CharView.aptitude_psychic.value = char_obj.aptitudes.psychic
+		CharView.aptitude_invocation.value = char_obj.aptitudes.invocation
+		CharView.aptitude_poison.value = char_obj.aptitudes.poison
+		CharView.aptitude_acid.value = char_obj.aptitudes.acid
+		CharView.aptitude_electricity.value = char_obj.aptitudes.electricity
+		CharView.aptitude_perfuration.value = char_obj.aptitudes.perfuration
+		CharView.aptitude_impact.value = char_obj.aptitudes.impact
+		CharView.aptitude_shooting.value = char_obj.aptitudes.shooting
+		CharView.aptitude_throwing.value = char_obj.aptitudes.throwing
+		CharView.aptitude_explosion.value = char_obj.aptitudes.explosion
+		CharView.aptitude_cutting.value = char_obj.aptitudes.cutting
+
+		CharView.resistance_air.value = char_obj.resistances.air
+		CharView.resistance_water.value = char_obj.resistances.water
+		CharView.resistance_fire.value = char_obj.resistances.fire
+		CharView.resistance_earth.value = char_obj.resistances.earth
+		CharView.resistance_cheese.value = char_obj.resistances.cheese
+		CharView.resistance_psychic.value = char_obj.resistances.psychic
+		CharView.resistance_invocation.value = char_obj.resistances.invocation
+		CharView.resistance_poison.value = char_obj.resistances.poison
+		CharView.resistance_acid.value = char_obj.resistances.acid
+		CharView.resistance_electricity.value = char_obj.resistances.electricity
+		CharView.resistance_perfuration.value = char_obj.resistances.perfuration
+		CharView.resistance_impact.value = char_obj.resistances.impact
+		CharView.resistance_shooting.value = char_obj.resistances.shooting
+		CharView.resistance_throwing.value = char_obj.resistances.throwing
+		CharView.resistance_explosion.value = char_obj.resistances.explosion
+		CharView.resistance_cutting.value = char_obj.resistances.cutting
+
 
 		CharView.total_action_points.value = char_obj.actions_obj.total_points
 
@@ -1070,6 +1227,42 @@ CharView.total_action_points = document.getElementById("char-total-action-points
 CharView.free_action_points = document.getElementById("char-free-action-points")
 
 CharView.aptitudes_and_resistances_container = document.getElementById("char-aptitudes-and-resistances-container")
+
+CharView.aptitude_air = document.getElementById('char-aptitude-air')
+CharView.resistance_air = document.getElementById('char-resistance-air')
+CharView.aptitude_water = document.getElementById('char-aptitude-water')
+CharView.resistance_water = document.getElementById('char-resistance-water')
+CharView.aptitude_fire = document.getElementById('char-aptitude-fire')
+CharView.resistance_fire = document.getElementById('char-resistance-fire')
+CharView.aptitude_earth = document.getElementById('char-aptitude-earth')
+CharView.resistance_earth = document.getElementById('char-resistance-earth')
+
+CharView.aptitude_cheese = document.getElementById('char-aptitude-cheese')
+CharView.resistance_cheese = document.getElementById('char-resistance-cheese')
+CharView.aptitude_psychic = document.getElementById('char-aptitude-psychic')
+CharView.resistance_psychic = document.getElementById('char-resistance-psychic')
+CharView.aptitude_invocation = document.getElementById('char-aptitude-invocation')
+CharView.resistance_invocation = document.getElementById('char-resistance-invocation')
+CharView.aptitude_poison = document.getElementById('char-aptitude-poison')
+CharView.resistance_poison = document.getElementById('char-resistance-poison')
+
+CharView.aptitude_acid = document.getElementById('char-aptitude-acid')
+CharView.resistance_acid = document.getElementById('char-resistance-acid')
+CharView.aptitude_electricity = document.getElementById('char-aptitude-electricity')
+CharView.resistance_electricity = document.getElementById('char-resistance-electricity')
+CharView.aptitude_perfuration = document.getElementById('char-aptitude-perfuration')
+CharView.resistance_perfuration = document.getElementById('char-resistance-perfuration')
+CharView.aptitude_impact = document.getElementById('char-aptitude-impact')
+CharView.resistance_impact = document.getElementById('char-resistance-impact')
+
+CharView.aptitude_shooting = document.getElementById('char-aptitude-shooting')
+CharView.resistance_shooting = document.getElementById('char-resistance-shooting')
+CharView.aptitude_throwing = document.getElementById('char-aptitude-throwing')
+CharView.resistance_throwing = document.getElementById('char-resistance-throwing')
+CharView.aptitude_explosion = document.getElementById('char-aptitude-explosion')
+CharView.resistance_explosion = document.getElementById('char-resistance-explosion')
+CharView.aptitude_cutting = document.getElementById('char-aptitude-cutting')
+CharView.resistance_cutting = document.getElementById('char-resistance-cutting')
 
 CharView.selector = document.getElementById("char-selector")
 

@@ -1,7 +1,7 @@
 class Attack {
 	static objs = []
 
-	static damage_types = ["Air", "Water", "Fire", "Earth", "Psychic", "Invocation", "Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Cheese", "Electricity", "Acid", "Poison"]
+	static damage_types = ["Air", "Water", "Fire", "Earth", "Psychic", "Invocation", "Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Cheese", "Electricity", "Acid", "Poison", "Throwing"]
 
 	static get_html () {
 		let html = `<div class="actions-container">

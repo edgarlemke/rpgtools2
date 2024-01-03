@@ -48,3 +48,8 @@ input#char-age, input#char-level, input[type="number"] {
 button#char-submit-button {
 	margin-top: 25px;
 }
+
+textarea#char-story {
+	width: 95%;
+	height: 250px;
+}
