@@ -238,7 +238,7 @@ class InventoryView {
 			inventory_obj.equipped.splice(inventory_obj.equipped.indexOf(item_index, 1))
 		}
 
-		console.log(inventory_obj.equipped)
+		//console.log(inventory_obj.equipped)
 	}
 
 	static drop (button) {
@@ -256,7 +256,7 @@ class InventoryView {
 	}
 
 	static _buy (char_name, item_name) {
-		console.log('_buy ' + item_name)
+		// console.log('_buy ' + item_name)
 
 		const char_obj = Char.objs[char_name]
 		const inventory_obj = char_obj.inventory_obj

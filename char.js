@@ -67,6 +67,148 @@ class Char {
 		"Inconsequential"
 	]
 
+	static status_objs = {
+		Alive    : {},
+		Dead     : {},
+		Hidden   : {},
+		Sleeping : {},
+		Injured  : {},
+		'Severely Injured' : {},
+		Stimulated : {},
+		Safeguarded : {},
+		Imobilized : {},
+
+        'Unstoppable Blade' : {turns: 1, duration: 1,
+			turn: (target_obj, status_obj) => {
+				status_obj.duration -= 1
+			},
+			end: (target_obj, status_obj) => {
+				// clean Unstoppable Blade status object
+				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+			}
+		},
+		Covered : {turns: 1, duration: 1,
+			turn: (target_obj, status_obj) => {
+				status_obj.duration -= 1
+			},
+			end: (target_obj, status_obj) => {
+				// clean Covered status object
+				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+			}
+		},
+		'Accurate Shot' : {turns: 1, duration: 1,
+			turn: (target_obj, status_obj) => {
+				status_obj.duration -= 1
+			},
+			end: (target_obj, status_obj) => {
+				// clean Covered status object
+				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+			}
+		},
+
+		Pacified : {char_name: null},
+		Hypnotized : {char_name: null, turns: 2, duration: 2,
+			turn: (target_obj, status_obj) => {
+				status_obj.duration -= 1
+			},
+			end: (target_obj, status_obj) => {
+				// clean Hypnotized status object
+				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+			}
+		},
+		Possessed : {turns: 2, duration: 2,
+			turn: (target_obj, status_obj) => {
+				status_obj.duration -= 1
+			},
+			end: (target_obj, status_obj) => {
+				// clean Possessed status object
+				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+			}
+		},
+
+		Frenesi  : {turns: 3, duration: 3, points: 3,
+			turn: (target_obj, status_obj) => {
+				status_obj.duration -= 1
+			},
+			end: (target_obj, status_obj) => {
+				// clean Frenesi status object
+				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+
+				// subtract given points from all habilities
+				Object.keys(target_obj.stats_objs.current).forEach((key) => {
+					target_obj.stats_objs.current[key] -= status_obj.points
+				})
+			}
+		},
+		Blessed  : {turns: 3, duration: 3, points: 3,
+			turn: (target_obj, status_obj) => {
+				status_obj.duration -= 1
+			},
+			end: (target_obj, status_obj) => {
+				// clean Blessed status object
+				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+
+				// subtract given points from all habilities
+				Object.keys(target_obj.stats_objs.current).forEach((key) => {
+					target_obj.stats_objs.current[key] -= status_obj.points
+				})
+			}
+		},
+		Cursed   : {turns: 3, duration: 3, points: 3,
+			turn: (target_obj, status_obj) => {
+				status_obj.duration -= 1
+			},
+			end: (target_obj, status_obj) => {
+				// clean Cursed status object
+				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+
+				// add back taken points from all habilities
+				Object.keys(target_obj.stats_objs.current).forEach((key) => {
+					target_obj.stats_objs.current[key] += status_obj.points
+				})
+			}
+		},
+		//Poisoned : {turns: 0, duration: 0, points: 100},
+		Sedated  : {turns: 3, duration: 3, points: 1,
+			turn: (target_obj, status_obj) => {
+				Object.keys(target_obj.stats_objs.current).forEach((key) => {
+					target_obj.stats_objs.current[key] -= status_obj.points
+				})
+				status_obj.duration -= 1
+			},
+			end: (target_obj, status_obj) => {
+				// clean Sedated status object
+				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+
+				// give back lost points
+				Object.keys(target_obj.stats_objs.current).forEach((key) => {
+					target_obj.stats_objs.current[key] += (status_obj.points * status_obj.turns)
+				})
+
+				// add Sleeping status
+				target_obj.status.push({name: 'Sleeping'})
+			}
+		},
+	}
+
 	static base_health_points = 0
 	static health_points_per_level = 100
 
@@ -99,6 +241,8 @@ class Char {
 		this.health.current = this.health.base
 
 		this.inventory_obj = new Inventory(this)
+
+		this.status = [{name: 'Alive'}]
 	}
 
 	get_base_stats_obj () {
@@ -660,39 +804,39 @@ class CharView {
 			... aptitudes
 		}
 
-		aptitudes.air = CharView.aptitude_air.value
-		aptitudes.water = CharView.aptitude_water.value
-		aptitudes.fire = CharView.aptitude_fire.value
-		aptitudes.earth = CharView.aptitude_earth.value
-		aptitudes.cheese = CharView.aptitude_cheese.value
-		aptitudes.psychic = CharView.aptitude_psychic.value
-		aptitudes.invocation = CharView.aptitude_invocation.value
-		aptitudes.poison = CharView.aptitude_poison.value
-		aptitudes.acid = CharView.aptitude_acid.value
-		aptitudes.electricity = CharView.aptitude_electricity.value
-		aptitudes.perfuration = CharView.aptitude_perfuration.value
-		aptitudes.impact = CharView.aptitude_impact.value
-		aptitudes.shooting = CharView.aptitude_shooting.value
-		aptitudes.throwing = CharView.aptitude_throwing.value
-		aptitudes.explosion = CharView.aptitude_explosion.value
-		aptitudes.cutting = CharView.aptitude_cutting.value
+		aptitudes.air = Number(CharView.aptitude_air.value)
+		aptitudes.water = Number(CharView.aptitude_water.value)
+		aptitudes.fire = Number(CharView.aptitude_fire.value)
+		aptitudes.earth = Number(CharView.aptitude_earth.value)
+		aptitudes.cheese = Number(CharView.aptitude_cheese.value)
+		aptitudes.psychic = Number(CharView.aptitude_psychic.value)
+		aptitudes.invocation = Number(CharView.aptitude_invocation.value)
+		aptitudes.poison = Number(CharView.aptitude_poison.value)
+		aptitudes.acid = Number(CharView.aptitude_acid.value)
+		aptitudes.electricity = Number(CharView.aptitude_electricity.value)
+		aptitudes.perfuration = Number(CharView.aptitude_perfuration.value)
+		aptitudes.impact = Number(CharView.aptitude_impact.value)
+		aptitudes.shooting = Number(CharView.aptitude_shooting.value)
+		aptitudes.throwing = Number(CharView.aptitude_throwing.value)
+		aptitudes.explosion = Number(CharView.aptitude_explosion.value)
+		aptitudes.cutting = Number(CharView.aptitude_cutting.value)
 
-		resistances.air = CharView.resistance_air.value
-		resistances.water = CharView.resistance_water.value
-		resistances.fire = CharView.resistance_fire.value
-		resistances.earth = CharView.resistance_earth.value
-		resistances.cheese = CharView.resistance_cheese.value
-		resistances.psychic = CharView.resistance_psychic.value
-		resistances.invocation = CharView.resistance_invocation.value
-		resistances.poison = CharView.resistance_poison.value
-		resistances.acid = CharView.resistance_acid.value
-		resistances.electricity = CharView.resistance_electricity.value
-		resistances.perfuration = CharView.resistance_perfuration.value
-		resistances.impact = CharView.resistance_impact.value
-		resistances.shooting = CharView.resistance_shooting.value
-		resistances.throwing = CharView.resistance_throwing.value
-		resistances.explosion = CharView.resistance_explosion.value
-		resistances.cutting = CharView.resistance_cutting.value
+		resistances.air = Number(CharView.resistance_air.value)
+		resistances.water = Number(CharView.resistance_water.value)
+		resistances.fire = Number(CharView.resistance_fire.value)
+		resistances.earth = Number(CharView.resistance_earth.value)
+		resistances.cheese = Number(CharView.resistance_cheese.value)
+		resistances.psychic = Number(CharView.resistance_psychic.value)
+		resistances.invocation = Number(CharView.resistance_invocation.value)
+		resistances.poison = Number(CharView.resistance_poison.value)
+		resistances.acid = Number(CharView.resistance_acid.value)
+		resistances.electricity = Number(CharView.resistance_electricity.value)
+		resistances.perfuration = Number(CharView.resistance_perfuration.value)
+		resistances.impact = Number(CharView.resistance_impact.value)
+		resistances.shooting = Number(CharView.resistance_shooting.value)
+		resistances.throwing = Number(CharView.resistance_throwing.value)
+		resistances.explosion = Number(CharView.resistance_explosion.value)
+		resistances.cutting = Number(CharView.resistance_cutting.value)
 
 		const actions_obj = {
 			total_points : CharView.total_action_points.value,
@@ -811,8 +955,12 @@ class CharView {
 		}
 		else if (CharView.mode == 'edit') {
 			const char_name = CharView.selector.selectedOptions[0].innerText
-			const stats = Char.objs[char_name].inventory_obj.get_stats()		
-			return stats
+			if (Char.objs[char_name]) {
+				return Char.objs[char_name].inventory_obj.get_stats()		
+			}
+			else {
+				return new Stats(0, 0, 0, 0, 0)
+			}
 		}
 	}
 
@@ -852,8 +1000,6 @@ class CharView {
 	static _get_char_actions () {
 		return Object.keys(Action.objs).filter((key) => {
 			const action_obj = Action.objs[key]
-			// console.log("CharView._get_char_actions(): action_obj")
-			// console.log(action_obj)
 
 			const char_race = CharView.race.selectedOptions[0].innerText
 			const char_class = CharView.class_.selectedOptions[0].innerText

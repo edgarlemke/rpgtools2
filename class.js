@@ -48,13 +48,14 @@ new Class("Swordsman", "Once a time we needed to cut down an old and thick tree.
 new Class("Shooter", "Our uncle took us to hunting when I was a child. Next, I became sniper.", new Stats(0, 2, 3, 0, 0))
 //new Class("Bounty Hunter",        "Let's go to the war weakling.", new Stats(2, 1, 2, 0, 0))
 //new Class("Maniac",     "Demon face was my nickname when I was a kid.", new Stats(2, 1, 1, 1, 0))
+new Class("Circus Artist",     "Combines artistic tricks and illusions with a sleight hand.", new Stats(0, 0, 2, 0, 3))
 new Class("Engineer",        "Have you known about my new gadget? It walks, blinks, jumps, play radio, serves coffee and regonizes ants in the garden.", new Stats(0, 0, 2, 3, 0))
 new Class("Witch",          "It's us that fly big witch.", new Stats(0, 0, 0, 3, 2))
 new Class("Alchemist",       "Solve et coagula, mercury and sulfur, sun and moon, 7 hours on the violet fire of purification and with luck no explosion.", new Stats(0, 0, 2, 3, 0))
 //new Class("Mentalist",    "Hold my hands and close your eyes. I feel... I feel you strive to overcome your challenges, and that sometimes situations become hard and painful but you still believe you'll reach your goals.", new Stats(0, 0, 1, 1, 3)) -> Circus, Clarvoyant
 new Class("Chimera",       "Look at this animal. What is it? It has the head of a lion, the body of a bear and the tail of crocodile. Oh no, it's shapeshifting!", new Stats(1, 0, 0, 3, 1))
-new Class("Demonologist",        "Selling your soul to demons is the only way to get wealth, power, fame, sex and drinks without limits and with little effort.", new Stats(0, 0, 1, 3, 1))
-new Class("Messiah",         "There's only One God and He's your God! There's only One Messiah and it's Me!", new Stats(2, 1, 1, 1, 0))
-new Class("Slime",         "Good artists copy, great artists copy even more.", new Stats(2, 1, 1, 1, 0))
+//new Class("Demonologist",        "Selling your soul to demons is the only way to get wealth, power, fame, sex and drinks without limits and with little effort.", new Stats(0, 0, 1, 3, 1))
+new Class("Messiah",         "There's only One God and He's your God! There's only One Messiah and it's Me!", new Stats(0, 0, 1, 3, 1))
+//new Class("Mirror",         "Good artists copy, great artists copy even more.", new Stats(2, 1, 1, 1, 0))
 
 new Content("classes", Class.get_html())

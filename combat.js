@@ -57,6 +57,24 @@ class Combat {
 
 	skip () {
 		this.turn = (this.turn + 1) % this.sorted_order.length
+
+		// apply effects of status
+		const char_name = this.sorted_order[this.turn][0]
+		const char_obj = Char.objs[char_name]
+
+		char_obj.status.forEach((status_obj) => {
+			if (Object.keys(status_obj).includes('duration')) {
+
+				if (status_obj.duration > 0) {
+					status_obj.turn()
+				}
+
+				if (status_obj.duration == 0) {
+					status_obj.end()
+				}
+				
+			}
+		})
 	}
 }
 
@@ -186,6 +204,14 @@ class CombatView {
 		tbody.removeChild(tr)
 	}
 
+	static clean_team_members () {
+		remove_children(CombatView.team_members.tBodies[0])
+	}
+
+	static clean_creation_team_members () {
+		remove_children(CombatView.creation_team_members.tBodies[0])
+	}
+
 	static create_team () {
 		const team_name = CombatView.team_name.value
 
@@ -204,6 +230,8 @@ class CombatView {
 
 		fill_select(CombatView.teams_team_selector, Object.keys(Team.objs))
 		fill_select(CombatView.teams_selector, Object.keys(Team.objs))
+
+		CombatView.clean_team_members()
 	}
 
 	static add_team () {
@@ -242,6 +270,7 @@ class CombatView {
 
 		fill_select(CombatView.combat_selector, Object.keys(Combat.objs))
 		CombatView.combat_selector.onchange()
+		CombatView.clean_creation_team_members()
 	}
 
 	static select_combat () {
@@ -280,17 +309,31 @@ class CombatView {
 			const row = rows[i]
 			const char_name = row.getAttribute('data-char-name')
 			const char_obj = Char.objs[char_name]
-			const status_ = []
 
-			if (char_obj.health.current > 0) {
-				status_.push(`Alive (${char_obj.health.current})`)
-			}
-			else {
-				status_.push(`Dead`)
-			}
+			const status_html = []
+			char_obj.status.forEach((status_obj) => {
+				const keys_html = []
 
-			const status_text = status_.join(', ')
-			row.children[2].innerText = status_text
+				Object.keys(status_obj).forEach((key) => {
+					if (key == 'name' || typeof status_obj[key] === 'function') {
+						return
+					}
+
+					keys_html.push(`${key}: ${status_obj[key]}`)
+				})
+
+				if (status_obj.name == 'Alive') {
+					keys_html.push('Health: ' + char_obj.health.current)
+				}
+
+				const joined_keys_html = keys_html.join(', ')
+
+				status_html.push(`
+<b>${status_obj.name}</b> ${joined_keys_html.length > 0 ? `- ${joined_keys_html}` : ''}
+`)
+			})
+
+			row.children[2].innerHTML = status_html.join('<br>')
 		}
 	}
 
@@ -353,6 +396,10 @@ class CombatView {
 				return CombatView.get_attack_modal_content(action_name)
 				break
 
+			case 'Trick':
+				return CombatView.get_trick_modal_content(action_name)
+				break
+
 			default:
 				throw 'Invalid action_class: ' + action_class
 				break
@@ -380,7 +427,7 @@ class CombatView {
 
 	<div class="modal_line">
 		<div class="modal_first_cell">Targets</div>
-		<div><select id="attack-targets" onchange="CombatView.handle_attack_targets_change()" multiple></select></div>
+		<div><select id="attack-targets" onchange="CombatView.handle_targets_change('attack-targets', 'combat-attack-targets-d20s-container', 'attack-enemy-d20')" multiple></select></div>
 	</div>
 
 	<div id="combat-attack-targets-d20s-container">
@@ -422,10 +469,83 @@ class CombatView {
 		return [template, onload]
 	}
 
+
+	static get_trick_modal_content (action_name) {
+		const action_obj = Action.objs[action_name]
+
+		const template = `
+<section class="modal_section">
+	<h4>Test</h4>
+	<div class="modal_line">
+		<div class="modal_first_cell">Hability</div>
+		<div><select id="trick-hability"></select></div>
+	</div>
+
+	<!--
+	<div class="modal_line">
+		<div class="modal_first_cell">Damage type</div>
+		<div><select id="trick-damage-type"></select></div>
+	</div>
+	-->
+
+	<div class="modal_line">
+		<div class="modal_first_cell">D20</div>
+		<div><input id="trick-d20" type="number" min="0" max="20" value="0" /></div>
+	</div>
+
+	<div class="modal_line">
+		<div class="modal_first_cell">Targets</div>
+		<div><select id="trick-targets" ${action_obj.meta_obj.needs_targets_d20 ? `onchange="CombatView.handle_targets_change('trick-targets', 'combat-trick-targets-d20s-container', 'trick-enemy-d20')"` : ''} multiple></select></div>
+	</div>
+
+	${action_obj.meta_obj.needs_targets_d20 ? `
+	<div id="combat-trick-targets-d20s-container">
+	</div>
+	` : '' }
+
+	<button onclick="CombatView.trick('${action_name}')" style="margin: 20px 0 auto;">Trick!</button>
+</section>
+`
+
+		const onload = () => {
+			const trick_hability = document.getElementById('trick-hability')
+			// const trick_damage_type = document.getElementById('trick-damage-type')
+			const trick_targets = document.getElementById('trick-targets')
+			const trick_d20 = document.getElementById('trick-d20')
+			// const trick_enemies_d20 = document.getElementsByClassName('trick-enemy-d20')
+
+			const action_obj = Action.objs[action_name]
+
+			action_obj.habilities.forEach((hability) => {
+				const option = document.createElement('option')
+				option.innerText = hability
+				trick_hability.appendChild(option)
+			})
+
+			//fill_select(trick_damage_type, action_obj.meta_obj.damage_types)
+
+			const combat_obj = Combat.objs[CombatView.selected_combat]
+			const targets = combat_obj.sorted_order.forEach((order_array) => {
+				/*
+				if (order_array[0] == combat_obj.sorted_order[combat_obj.turn][0]) {
+					return
+				}
+				*/
+
+				const option = document.createElement('option')
+				option.innerText = order_array[0]
+				trick_targets.appendChild(option)
+			})
+		}
+
+		return [template, onload]
+	}
+
 	static skip () {
 		const combat_obj = Combat.objs[CombatView.selected_combat]
 		combat_obj.skip()
 		CombatView.update_actions()
+		CombatView.update_status()
 	}
 
 	static attack (action_name) {
@@ -452,7 +572,7 @@ class CombatView {
 			targets_d20s.push(Number(enemy_d20.value))
 		}
 
-		const damage_type = attack_damage_type.selectedOptions[0].innerText
+		const damage_type = attack_damage_type.selectedOptions[0].innerText.toLowerCase()
 
 		const result = action_obj.meta_obj.act(attacker_name, hability, targets_names, attacker_d20, targets_d20s, damage_type)
 		console.log(result)
@@ -468,21 +588,26 @@ class CombatView {
 	<h4>Legend</h4>
 
 	<div><b>TEST:</b> ((AH + AA + D20) - (TH + TR + TD + TD20)) >= DIF</div>
-	<div><b>DAMAGE:</b> (((AH + AA + D20 + DIF + WD) - (TR + TD)) / TC) * MUL</div>
+<!--	<div><b>DAMAGE:</b> (((AH + AA + D20 + DIF + WD) - (TR + TD)) / TC) * MUL</div> -->
+	<div><b>ATTACK DAMAGE (AD):</b> BD + ((AH + AA + D20 + WD) * (1 + ((AL - 1) * 0.2)))</div>
+	<div><b>DAMAGE:</b> (AD - (TR + TD) / TC) * DIF * MUL</div>
 	<div><small>When damage isn't integer, it's rounded down.</small></div>
 
 	<ul>
+		<li>BD - Base Damage</li>
 		<li>AH - Attacker Hability</li>
-		<li>AP - Attacker Aptitude in Damage Type</li>
+		<li>AA - Attacker Aptitude in Damage Type</li>
 		<li>D20 - Attacker D20</li>
 		<li>WD - Weapon Damage</li>
+		<li>AL - Action Level</li>
 		<li>TH - Target Hability</li>
 		<li>TR - Target Resistance against Damage Type</li>
 		<li>TD - Target Defenses</li>
 		<li>TC - Target Count</li>
 		<li>TD20 - Target D20</li>
 		<li>DIF - Action Difficulty</li>
-		<li>MUL - Multiplier - 3 if D20 == 20, else 1</li>
+<!--		<li>MUL - Multiplier - 3 if D20 == 20, else 1</li> -->
+		<li>MUL - Multiplier - 2 if D20 == 20, else 1</li>
 	</ul>
 </section>
 `
@@ -497,8 +622,10 @@ class CombatView {
 			template.innerHTML = `
 <div class="combat-attack-target-result">
 	<div><b>${target_name}</b></div>
-	<div><b>TEST:</b> ((${r.AH} + ${r.AA} + ${r.D20}) - (${r.TH} + ${r.TR} + ${r.TD} + ${r.TD20})) >= ${r.DIF} = <b>${r.test_result ? 'Passed' : 'Failed'}</b></div>
-	${r.test_result ? `<div><b>DAMAGE:</b> (((${r.AH} + ${r.AA} + ${r.D20} + ${r.DIF} + ${r.WD}) - (${r.TR} + ${r.TD})) / ${r.TC}) * ${r.D20 == 20 ? 3 : 1} = <b>${r.damage}</b></div>` : ''}
+	<div><b>TEST:</b> ((${r.AH} + ${r.AA} + ${r.D20}) - (${r.TH} + ${r.TR} + ${r.TD} + ${r.TD20})) = ${r.test_result_value} >= ${r.DIF} -> <b>${r.test_result ? 'Passed' : 'Failed'}</b></div>
+<!--	${r.test_result ? `<div><b>DAMAGE:</b> (((${r.AH} + ${r.AA} + ${r.D20} + ${r.DIF} + ${r.WD}) - (${r.TR} + ${r.TD})) / ${r.TC}) * ${r.D20 == 20 ? 3 : 1} = <b>${r.damage}</b></div>` : ''} -->
+    ${r.test_result ? `<div><b>ATTACK DAMAGE (AD):</b> ${r.BD} + ((${r.AH} + ${r.AA} + ${r.D20} + ${r.WD}) * (1 + ((${r.AL} - 1) * 0.2))) = ${r.AD}` : ''}
+	${r.test_result ? `<div><b>DAMAGE:</b> (${r.AD} - (${r.TR} + ${r.TD}) / ${r.TC}) * ${r.DIF} * ${r.D20 == 20 ? 2 : 1} = <b>${r.damage}</b></div>` : ''}
 	${r.test_result ? `<div><button onclick="CombatView.add_sub_aptitude_resistance('${target_name}', 'resistances', '${damage_type}', 'add', this)">Add Resistance point</button></div>` : ''}
 </div>`
 
@@ -520,13 +647,71 @@ class CombatView {
 		CombatView.update_status()
 	}
 
-	static handle_attack_targets_change () {
-		console.log('handle_attack_targets_change')
+	static trick (action_name) {
+		const trick_hability = document.getElementById('trick-hability')
+		//const trick_damage_type = document.getElementById('trick-damage-type')
+		const trick_targets = document.getElementById('trick-targets')
+		const trick_d20 = document.getElementById('trick-d20')
+		const trick_enemies_d20 = document.getElementsByClassName('trick-enemy-d20')
 
-		const attack_targets = document.getElementById('attack-targets')
-		console.log(attack_targets)
+		const combat_obj = Combat.objs[CombatView.selected_combat]
+		const action_obj = Action.objs[action_name]
 
-		const container = document.getElementById('combat-attack-targets-d20s-container')
+		const tricker_name = combat_obj.sorted_order[combat_obj.turn][0]
+		const hability = trick_hability.selectedOptions[0].innerText.toLowerCase()
+		const targets_names = []
+		for (let i = 0; i < trick_targets.selectedOptions.length; i++) {
+			const selectedOption = trick_targets.selectedOptions[i]
+			targets_names.push(selectedOption.innerText)
+		}
+
+		const tricker_d20 = Number(trick_d20.value)
+
+		const targets_d20s = []
+		if (action_obj.meta_obj.needs_targets_d20) {
+			for (let i = 0; i < trick_enemies_d20.length; i++) {
+				const enemy_d20 = trick_enemies_d20[i]
+				targets_d20s.push(Number(enemy_d20.value))
+			}
+		}
+
+		const result = action_obj.meta_obj.act(tricker_name, hability, targets_names, tricker_d20, targets_d20s)
+
+		const legend_html = action_obj.meta_obj.legend_html
+
+//
+		const result_modal_content = `
+<section id="combat-trick-results" class="modal_section">
+	<h4>Results</h4>
+</section>
+<hr style="border: solid 1px black;" />
+<section class="modal_section">
+	<h4>Legend</h4>
+
+	${legend_html}
+</section>
+`
+		new Modal(`${action_name} result`, result_modal_content)
+
+		const combat_trick_results = document.getElementById('combat-trick-results')
+		Object.keys(result).forEach((target_name) => {
+			const r = result[target_name]
+			const template = document.createElement('template')
+			template.innerHTML = `
+<div class="combat-attack-target-result">
+	${result[target_name]}
+</div>`
+
+			combat_trick_results.appendChild(...template.content.children)
+		})
+
+		CombatView.update_status()
+	}
+
+	static handle_targets_change (targets_select_id, targets_container_id, target_d20_input_class) {
+		const attack_targets = document.getElementById(targets_select_id)
+
+		const container = document.getElementById(targets_container_id)
 		remove_children(container)
 
 		const targets = []
@@ -537,7 +722,7 @@ class CombatView {
 			template.innerHTML = `
 <div class="modal_line">
 	<div class="modal_first_cell">${target_name} D20</div>
-	<div><input class="attack-enemy-d20" type="number" min="0" max="20" value="0" /></div>
+	<div><input class="${target_d20_input_class}" type="number" min="0" max="20" value="0" /></div>
 </div>
 `
 			container.appendChild(...template.content.children)
