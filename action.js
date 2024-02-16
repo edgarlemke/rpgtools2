@@ -53,11 +53,19 @@ class Action {
 
 }
 
-new Action("Withdraw", "Allows a player to move out of the hot zone of combat. Enemies can still see them. Melee attacks are possible only if the enemy moves closer to the player.", 7, null, 0, [], [], true, false, 1)
-new Action("Hide", "Allows a player to get out of combat temporarily. It remains hidden until an enemy uses \"Seek\" with success.", 10, null, 0, [], [], true, false, 1)
+new Action("Withdraw", "Allows a player to move out of the hot zone of combat. Enemies can still see them. Melee attacks aren't possible even if an enemy moves closer after this move for the current/next turn. Only ranger attacks are possible.", 7, null, 0, [], [], true, false, 1)
+new Action("Hide", "Allows a player to avoid being perceived by an enemy. It remains hidden until an enemy uses \"Seek\" with success or the player does some actions that *requires showing*.", 10, null, 0, [], [], true, false, 1)
 new Action("Seek", "Looks for a hidden enemy.", 10, null, 0, [], [], true, true, 1)
 new Action("Insight", "Allows a player to get some important information from the world.", 7, null, 0, [], [], true, false, 1)
-new Action("Consume item", "Consume an item over self or others.", 10, null, 0, [], [], true, true, 1)
+new Action("Consume drug", "Consume a drug from the inventory.", 10, null, 0, [], [], true, true, 1)
+
+// Throw acid bottle
+// Throw poison bottle
+// Throw potion
+// Throw sedative
+// Throw medicine
+// Throw stimulant
+// Throw antidote
 
 //new Action("Fabricate Potion", "", 2, null, 0, [], ["Alchemist"], true, false, 1)
 //new Action("Preach the Word", "", 2, null, 0, [], ["Messiah"], true, false, 1)

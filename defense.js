@@ -17,14 +17,14 @@ class Defense {
 		return html
 	}
 
-	constructor (item_obj, defense_points, damage_type) {
+	constructor (item_obj, defense_points, damage_types) {
 		this.name = item_obj.name
 		this.item_obj = item_obj
 		item_obj.meta_obj = this
 		Defense.objs[this.name] = this
 
 		this.defense_points = defense_points
-		this.damage_type = damage_type
+		this.damage_types = damage_types
 	}
 
 	get_html () {

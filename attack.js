@@ -50,7 +50,7 @@ class Attack {
 		return html
 	}
 
-	act (attacker_name, hability, targets_names, attacker_d20, targets_d20s, damage_type) {
+	act (attacker_name, hability, targets_names, attacker_d20, damage_type) {
 		const attacker_obj = Char.objs[attacker_name]
 		const attacker_hability = attacker_obj.stats_objs.current[hability]
 		const attacker_aptitude = attacker_obj.aptitudes[damage_type]
@@ -85,16 +85,20 @@ class Attack {
 
 			let target_defenses = 0
 			target_obj.inventory_obj.equipped.forEach((item_index) => {
+				console.log('item_index', item_index)
+
 				const item_name = target_obj.inventory_obj.items[item_index]
+				console.log('item_name', item_name)
+
 				const item_obj = Item.objs[item_name]
+				console.log('item_obj', item_obj)
+
 				if (Object.keys(Defense.objs).includes(item_name) && item_obj.meta_obj.damage_types.includes(damage_type)) {
 					target_defenses += item_obj.meta_obj.defense_points
 				}
 			})
 
-			const target_d20 = targets_d20s[targets_objs.indexOf(target_obj)]
-
-			const test_result_value = ((attacker_hability + attacker_aptitude + attacker_d20) - (target_hability + target_resistance + target_defenses + target_d20))
+			const test_result_value = ((attacker_hability + attacker_aptitude + attacker_d20) - (target_hability + target_resistance + target_defenses))
 			const test_result = test_result_value >= difficulty
 
 			// sets the proper result object with an object already containing the abbreviations
@@ -109,7 +113,6 @@ class Attack {
 				TR: target_resistance,
 				TD: target_defenses,
 				TC: targets_count,
-				TD20: target_d20,
 				DIF: difficulty,
 				test_result_value: test_result_value,
 				test_result: test_result,
@@ -188,11 +191,12 @@ new Attack(new Action("Kwink Blade", "", 1, ["Agility", "Dextrity"], 1, [], ["En
 new Attack(new Action("Kwink Hammer", "", 2, ["Dextrity", "Strength"], 1, [], ["Engineer"], false, true, 1), ['Impact'], 0)
 new Attack(new Action("Lightning", "", 3, ["Intelligence", "Dextrity"], 1, [], ["Engineer"], false, true, 2), ['Electricity'], 0)
 
-new Attack(new Action("Suferring Spectacle", "", 1, ["Agility", "Dextrity"], 1, [], ["Circus Artist"], false, true, 1), ['Cutting'], 0)
+new Attack(new Action("Suffering Spectacle", "", 1, ["Agility", "Dextrity"], 1, [], ["Circus Artist"], false, true, 1), ['Cutting'], 0)
 new Attack(new Action("Bloody Acrobacies", "", 2, ["Dextrity", "Strength"], 1, [], ["Circus Artist"], false, true, 1), ['Impact'], 0)
 
 new Attack(new Action("Blood needles", "", 0, ["Intelligence"], 1, ["Ghoul"], [], false, true, 1), ['Perfuration'], 0)
 new Attack(new Action("Gluttonous thrust", "", 1, ["Agility", "Dextrity"], 1, ["Ghoul"], [], false, true, 1), ['Cutting', 'Perfuration'], 0)
+new Attack(new Action("Flash Slay", "", 1, ["Agility"], 1, ["Ghoul"], [], false, true, 1), ['Cutting'], 0)
 
 new Attack(new Action("Elemental sphere", "", 0, ["Intelligence"], 1, ["Elemental"], [], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
 new Attack(new Action("Elemental spikes", "", 1, ["Intelligence"], 1, ["Elemental"], [], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)

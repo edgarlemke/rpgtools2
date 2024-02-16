@@ -7,15 +7,19 @@ class Combat {
 
 		const order_obj_copy = {...order_obj}
 
+		// for backup
+		this.order_obj = order_obj_copy 
+
 		// iter over obj_copy to get each char agility and add it to the given values
 		Object.keys(order_obj_copy).forEach((char_name) => {
 			const char_obj = Char.objs[char_name]
 			order_obj_copy[char_name] += char_obj.stats_objs.current.agility
 		})
+		console.log('order_obj_copy', order_obj_copy)
 		
 		const ties = {}
 		const tmp_sorted_order = Object.keys(order_obj_copy).sort((a, b) => {
-			const diff = order_obj_copy[a] - order_obj_copy[b]
+			const diff = order_obj_copy[b] - order_obj_copy[a]
 
 			if (diff == 0) {
 				const tie_value = order_obj_copy[a]
@@ -30,7 +34,10 @@ class Combat {
 					ties[ tie_value ].push(b)
 				}
 			}
+
+			return diff
 		})
+		console.log('tmp_sorter_order', tmp_sorted_order)
 
 		if (Object.keys(ties).length > 0) {
 			let ties_msg = ''
@@ -49,6 +56,7 @@ class Combat {
 		tmp_sorted_order.forEach((char_name) => {
 			sorted_order.push([char_name, order_obj[char_name]])
 		})
+		console.log('sorted_order', sorted_order)
 		
 		this.sorted_order = sorted_order
 
@@ -56,11 +64,11 @@ class Combat {
 	}
 
 	skip () {
-		this.turn = (this.turn + 1) % this.sorted_order.length
-
 		// apply effects of status
 		const char_name = this.sorted_order[this.turn][0]
 		const char_obj = Char.objs[char_name]
+
+		this.turn = (this.turn + 1) % this.sorted_order.length
 
 		char_obj.status.forEach((status_obj) => {
 			if (Object.keys(status_obj).includes('duration')) {
@@ -97,7 +105,7 @@ class CombatView {
 	static get_html () {
 		let html = `
 <div class="combat-container">
-	<div>
+	<div id="combat-teams-container">
 		<h2>Teams</h2>
 
 		<div>
@@ -105,6 +113,7 @@ class CombatView {
 				<label for="combat-team-name">Team name</label>
 				<input type="text" id="combat-team-name" />
 			</div>
+
 			<div style="display: none">
 				<label for="combat-team">Team</label>
 				<select id="combat-teams-team-selector"></select>
@@ -159,6 +168,10 @@ class CombatView {
 
 			<button onclick="CombatView.create_combat()">Create Combat</button>
 		</div>
+	</div>
+
+	<div>
+		<h2>Round-robin</h2>
 
 		<div class="combat-turns-container">
 			<div>
@@ -212,6 +225,11 @@ class CombatView {
 		remove_children(CombatView.creation_team_members.tBodies[0])
 	}
 
+	static update_team () {
+		fill_select(CombatView.teams_team_selector, Object.keys(Team.objs))
+		fill_select(CombatView.teams_selector, Object.keys(Team.objs))
+	}
+
 	static create_team () {
 		const team_name = CombatView.team_name.value
 
@@ -228,10 +246,9 @@ class CombatView {
 
 		new Team(team_name, team_members)
 
-		fill_select(CombatView.teams_team_selector, Object.keys(Team.objs))
-		fill_select(CombatView.teams_selector, Object.keys(Team.objs))
-
+		CombatView.update_team()
 		CombatView.clean_team_members()
+		CombatView.team_name.value = ""
 	}
 
 	static add_team () {
@@ -253,6 +270,11 @@ class CombatView {
 		}
 	}
 
+	static update_combat () {
+		fill_select(CombatView.combat_selector, Object.keys(Combat.objs))
+		CombatView.combat_selector.onchange()
+	}
+
 	static create_combat () {
 		const combat_name = CombatView.creation_name.value
 
@@ -268,8 +290,7 @@ class CombatView {
 
 		new Combat(combat_name, order_obj)
 
-		fill_select(CombatView.combat_selector, Object.keys(Combat.objs))
-		CombatView.combat_selector.onchange()
+		CombatView.update_combat()
 		CombatView.clean_creation_team_members()
 	}
 
@@ -278,6 +299,8 @@ class CombatView {
 		CombatView.selected_combat = combat_name
 
 		const combat_obj = Combat.objs[combat_name]
+
+		remove_children(CombatView.combat_turns.tBodies[0])
 
 		combat_obj.sorted_order.forEach((char_array) => {
 			const char_name = char_array[0]
@@ -389,6 +412,8 @@ class CombatView {
 
 	static get_action_modal_content (action_name) {
 		const action_obj = Action.objs[action_name]
+		console.log('action_obj', action_obj)
+
 		const action_class = action_obj.meta_obj ? action_obj.meta_obj.class : null
 
 		switch (action_class) {
@@ -399,11 +424,14 @@ class CombatView {
 			case 'Trick':
 				return CombatView.get_trick_modal_content(action_name)
 				break
-
-			default:
-				throw 'Invalid action_class: ' + action_class
-				break
 		}
+
+		const modals_container = {
+			Hide : ``,
+			Seek : ``
+		}
+
+		
 	}
 
 	static get_attack_modal_content (action_name) {
@@ -427,7 +455,7 @@ class CombatView {
 
 	<div class="modal_line">
 		<div class="modal_first_cell">Targets</div>
-		<div><select id="attack-targets" onchange="CombatView.handle_targets_change('attack-targets', 'combat-attack-targets-d20s-container', 'attack-enemy-d20')" multiple></select></div>
+		<div><select id="attack-targets" multiple></select></div>
 	</div>
 
 	<div id="combat-attack-targets-d20s-container">
@@ -495,13 +523,8 @@ class CombatView {
 
 	<div class="modal_line">
 		<div class="modal_first_cell">Targets</div>
-		<div><select id="trick-targets" ${action_obj.meta_obj.needs_targets_d20 ? `onchange="CombatView.handle_targets_change('trick-targets', 'combat-trick-targets-d20s-container', 'trick-enemy-d20')"` : ''} multiple></select></div>
+		<div><select id="trick-targets" multiple></select></div>
 	</div>
-
-	${action_obj.meta_obj.needs_targets_d20 ? `
-	<div id="combat-trick-targets-d20s-container">
-	</div>
-	` : '' }
 
 	<button onclick="CombatView.trick('${action_name}')" style="margin: 20px 0 auto;">Trick!</button>
 </section>
@@ -566,15 +589,9 @@ class CombatView {
 			targets_names.push(selectedOption.innerText)
 		}
 		const attacker_d20 = Number(attack_d20.value)
-		const targets_d20s = []
-		for (let i = 0; i < attack_enemies_d20.length; i++) {
-			const enemy_d20 = attack_enemies_d20[i]
-			targets_d20s.push(Number(enemy_d20.value))
-		}
-
 		const damage_type = attack_damage_type.selectedOptions[0].innerText.toLowerCase()
 
-		const result = action_obj.meta_obj.act(attacker_name, hability, targets_names, attacker_d20, targets_d20s, damage_type)
+		const result = action_obj.meta_obj.act(attacker_name, hability, targets_names, attacker_d20, damage_type)
 		console.log(result)
 
 
@@ -587,8 +604,7 @@ class CombatView {
 <section class="modal_section">
 	<h4>Legend</h4>
 
-	<div><b>TEST:</b> ((AH + AA + D20) - (TH + TR + TD + TD20)) >= DIF</div>
-<!--	<div><b>DAMAGE:</b> (((AH + AA + D20 + DIF + WD) - (TR + TD)) / TC) * MUL</div> -->
+	<div><b>TEST:</b> ((AH + AA + D20) - (TH + TR + TD)) >= DIF</div>
 	<div><b>ATTACK DAMAGE (AD):</b> BD + ((AH + AA + D20 + WD) * (1 + ((AL - 1) * 0.2)))</div>
 	<div><b>DAMAGE:</b> (AD - (TR + TD) / TC) * DIF * MUL</div>
 	<div><small>When damage isn't integer, it's rounded down.</small></div>
@@ -604,9 +620,7 @@ class CombatView {
 		<li>TR - Target Resistance against Damage Type</li>
 		<li>TD - Target Defenses</li>
 		<li>TC - Target Count</li>
-		<li>TD20 - Target D20</li>
 		<li>DIF - Action Difficulty</li>
-<!--		<li>MUL - Multiplier - 3 if D20 == 20, else 1</li> -->
 		<li>MUL - Multiplier - 2 if D20 == 20, else 1</li>
 	</ul>
 </section>
@@ -622,7 +636,7 @@ class CombatView {
 			template.innerHTML = `
 <div class="combat-attack-target-result">
 	<div><b>${target_name}</b></div>
-	<div><b>TEST:</b> ((${r.AH} + ${r.AA} + ${r.D20}) - (${r.TH} + ${r.TR} + ${r.TD} + ${r.TD20})) = ${r.test_result_value} >= ${r.DIF} -> <b>${r.test_result ? 'Passed' : 'Failed'}</b></div>
+	<div><b>TEST:</b> ((${r.AH} + ${r.AA} + ${r.D20}) - (${r.TH} + ${r.TR} + ${r.TD})) = ${r.test_result_value} >= ${r.DIF} -> <b>${r.test_result ? 'Passed' : 'Failed'}</b></div>
 <!--	${r.test_result ? `<div><b>DAMAGE:</b> (((${r.AH} + ${r.AA} + ${r.D20} + ${r.DIF} + ${r.WD}) - (${r.TR} + ${r.TD})) / ${r.TC}) * ${r.D20 == 20 ? 3 : 1} = <b>${r.damage}</b></div>` : ''} -->
     ${r.test_result ? `<div><b>ATTACK DAMAGE (AD):</b> ${r.BD} + ((${r.AH} + ${r.AA} + ${r.D20} + ${r.WD}) * (1 + ((${r.AL} - 1) * 0.2))) = ${r.AD}` : ''}
 	${r.test_result ? `<div><b>DAMAGE:</b> (${r.AD} - (${r.TR} + ${r.TD}) / ${r.TC}) * ${r.DIF} * ${r.D20 == 20 ? 2 : 1} = <b>${r.damage}</b></div>` : ''}
@@ -667,15 +681,7 @@ class CombatView {
 
 		const tricker_d20 = Number(trick_d20.value)
 
-		const targets_d20s = []
-		if (action_obj.meta_obj.needs_targets_d20) {
-			for (let i = 0; i < trick_enemies_d20.length; i++) {
-				const enemy_d20 = trick_enemies_d20[i]
-				targets_d20s.push(Number(enemy_d20.value))
-			}
-		}
-
-		const result = action_obj.meta_obj.act(tricker_name, hability, targets_names, tricker_d20, targets_d20s)
+		const result = action_obj.meta_obj.act(tricker_name, hability, targets_names, tricker_d20)
 
 		const legend_html = action_obj.meta_obj.legend_html
 
@@ -706,27 +712,6 @@ class CombatView {
 		})
 
 		CombatView.update_status()
-	}
-
-	static handle_targets_change (targets_select_id, targets_container_id, target_d20_input_class) {
-		const attack_targets = document.getElementById(targets_select_id)
-
-		const container = document.getElementById(targets_container_id)
-		remove_children(container)
-
-		const targets = []
-		for (let i = 0; i < attack_targets.selectedOptions.length; i++) {
-			const target_name = attack_targets.selectedOptions[i].innerText
-
-			const template = document.createElement('template')
-			template.innerHTML = `
-<div class="modal_line">
-	<div class="modal_first_cell">${target_name} D20</div>
-	<div><input class="${target_d20_input_class}" type="number" min="0" max="20" value="0" /></div>
-</div>
-`
-			container.appendChild(...template.content.children)
-		}
 	}
 
 	static add_sub_aptitude_resistance (char_name, key, damage_type, action, button) {

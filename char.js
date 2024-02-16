@@ -881,13 +881,16 @@ class CharView {
 		else if (CharView.mode == 'edit') {
 			new Modal('Char updated', `Char ${name} updated!`)
 		}
+		
+		CharView.update()
+		CharView.clear()
+	}
 
+	static update () {
 		fill_select(CharView.selector, ['', ...Object.keys(Char.objs)])
 		fill_select(CombatView.team_member, Object.keys(Char.objs))
 		fill_select(InventoryView.char_selector, Object.keys(Char.objs))
 		InventoryView.select_char()
-
-		CharView.clear()
 	}
 
 	static _get_race_stats_obj () {
@@ -1005,7 +1008,9 @@ class CharView {
 			const char_class = CharView.class_.selectedOptions[0].innerText
 			const char_level = Number(CharView.level.value)
 
-			return ((!action_obj.for_all) && (action_obj.char_races.includes(char_race) || action_obj.char_classes.includes(char_class)) && action_obj.char_level <= char_level)
+			const race_obj = Race.objs[char_race]
+
+			return ((!action_obj.for_all) && (action_obj.char_races.includes(char_race) || (race_obj.has_class && action_obj.char_classes.includes(char_class))) && action_obj.char_level <= char_level)
 		})
 	}
 

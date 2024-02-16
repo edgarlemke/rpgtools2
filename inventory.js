@@ -262,6 +262,8 @@ class InventoryView {
 		const inventory_obj = char_obj.inventory_obj
 		const item_obj = Item.objs[item_name]
 
+		//console.log('item_name', item_name)
+
 		const char_has_money = inventory_obj.coins >= item_obj.price 
 		// console.log('char doesnt have money: ' + !char_has_money + ' - char cant hold item: ' + !inventory_obj.can_hold_item(item_name))
 
@@ -375,16 +377,18 @@ class InventoryView {
 			'Chimera' : ['Wand'],
 			'Demonologist' : ['Wand', 'Grimorium'],
 			'Messiah' : ['Wand', 'Grimorium'],
-			'Slime' : ['Wand'], // can use any weapon according to habilities
+			//'Slime' : ['Wand'], // can use any weapon according to habilities
 
-			'Ghoul' : [], // doesn't use weapons
-			'Elemental' : [], // doesn't use weapons
+			'Ghoul' : ['Ghoul Strength Damage Kit', 'Ghoul Agility Damage Kit'],
+			'Elemental' : ['Wand'],
 			'Undead' : ['Wand', 'Grimorium']
 		}
 
 		const char_name = InventoryView.char_selector.selectedOptions[0].innerText
 		const char_obj = Char.objs[char_name]
 		const highest_stats = char_obj.get_highest_stats()
+
+		console.log('char_obj', char_obj)
 
 		const buy_ammo = function (item_name) {
 			const max_spending = 20 + (dice(3) * 10)
@@ -401,54 +405,53 @@ class InventoryView {
 		// buy primary weapon
 		const race_obj = Race.objs[char_obj.race]
 		const hints = race_obj.has_class ? weapon_hints[char_obj.class] : weapon_hints[char_obj.race]
-		//console.log('hints')
-		//console.log(hints)
 
-		let hints_filtered_level = hints.filter((item_name) => {
-			const item_obj = Item.objs[item_name]
-			const habilities = item_obj.meta_obj.habilities
-			//console.log('item habilities')
-			//console.log(habilities)
 
-			if (item_obj.level > char_obj.level) {
-				return false
-			}
+		if (hints.length > 0) {
 
-			return true
-		})
-		//console.log('hints_filtered_level')
-		//console.log(hints_filtered_level)
-
-		let hints_filtered = hints_filtered_level.filter((item_name) => {
-			const item_obj = Item.objs[item_name]
-			const habilities = item_obj.meta_obj.habilities
-
-			let matches = false
-			highest_stats.forEach((hability) => {
-				const tuc_hability = hability[0].toUpperCase() + hability.slice(1)
-				//console.log('tuc_hability: ' + tuc_hability)
-
-				if (habilities.includes(tuc_hability)) {
-					matches = true
-				}
+			//console.log('hints', hints)
+	
+			let hints_filtered_level = hints.filter((item_name) => {
+				const item_obj = Item.objs[item_name]
+				const habilities = item_obj.meta_obj.habilities
+				//console.log('item habilities')
+				//console.log(habilities)
+	
+				return !(item_obj.level > char_obj.level) 
 			})
-
-			return matches
-		})
-		hints_filtered = hints_filtered.length > 0 ? hints_filtered : hints_filtered_level
-
-		//console.log('hints_filtered')
-		//console.log(hints_filtered)
-
-		const primary_weapon = hints_filtered[ dice(hints_filtered.length) - 1 ]
-		const bought_primary_weapon = InventoryView._buy(char_name, primary_weapon)
-
-		// buy ammo for primary weapon if needed
-		if (bought_primary_weapon) {
-			const primary_weapon_obj = Item.objs[primary_weapon]
-			const primary_weapon_ammo = primary_weapon_obj.meta_obj.ammo
-			if (primary_weapon_ammo) {
-				buy_ammo(primary_weapon_ammo)
+	
+			//console.log('hints_filtered_level', hints_filtered_level)
+	
+			let hints_filtered = hints_filtered_level.filter((item_name) => {
+				const item_obj = Item.objs[item_name]
+				const habilities = item_obj.meta_obj.habilities
+	
+				let matches = false
+				highest_stats.forEach((hability) => {
+					const tuc_hability = hability[0].toUpperCase() + hability.slice(1)
+					//console.log('tuc_hability: ' + tuc_hability)
+	
+					if (habilities.includes(tuc_hability)) {
+						matches = true
+					}
+				})
+	
+				return matches
+			})
+			hints_filtered = hints_filtered.length > 0 ? hints_filtered : hints_filtered_level
+	
+			//console.log('hints_filtered', hints_filtered)
+	
+			const primary_weapon = hints_filtered[ dice(hints_filtered.length) - 1 ]
+			const bought_primary_weapon = InventoryView._buy(char_name, primary_weapon)
+	
+			// buy ammo for primary weapon if needed
+			if (bought_primary_weapon) {
+				const primary_weapon_obj = Item.objs[primary_weapon]
+				const primary_weapon_ammo = primary_weapon_obj.meta_obj.ammo
+				if (primary_weapon_ammo) {
+					buy_ammo(primary_weapon_ammo)
+				}
 			}
 		}
 
