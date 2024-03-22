@@ -54,13 +54,12 @@ class Trick {
 }
 
 
-new Trick(new Action("Jungle Sedative", "Adds Sedated status.", 0, ["Intelligence"], 1, [], ["Chimera"], false, false, 1), `
-<div><b>TEST:</b> (TRH + D20) - (TH + TD20) >= DIF</div>
+new Trick(new Action("Jungle Sedative", "Adds Sedated status.", 13, ["Intelligence"], 1, [], ["Chimera"], false, false, 1), `
+<div><b>TEST:</b> (TRH + D20) - TH >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
 	<li>D20 - Tricker D20</li>
 	<li>TH - Target Hability</li>
-	<li>TD20 - Target D20</li>
 	<li>DIF - Difficulty</li>
 </ul>
 `, (action_name, tricker_name, hability, targets_names, tricker_d20) => {
@@ -84,8 +83,12 @@ new Trick(new Action("Jungle Sedative", "Adds Sedated status.", 0, ["Intelligenc
 		// sets the proper result object with an object already containing the abbreviations
 		result[target_obj.name] = `
 <div><b>${target_name}</b></div>
-<div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) - ${target_hability} >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
+<div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) - ${target_hability} = ${test_result_value} >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
+
+        if (!test_result) {
+			return
+		}
 
 		const status_name = 'Sedated'
 		const status_obj = {
@@ -104,7 +107,7 @@ new Trick(new Action("Jungle Sedative", "Adds Sedated status.", 0, ["Intelligenc
 	return result
 })
 
-new Trick(new Action("Minor Healing", "Recovers health points", 1, ["Intelligence"], 1, [], ["Witch", "Chimera"], false, false, 1), `
+new Trick(new Action("Minor Healing", "Recovers health points", 1, ["Intelligence"], 11, [], ["Witch", "Chimera"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <div><b>HEAL:</b> 50 + TRH + D20</div>
 <ul>
@@ -135,8 +138,11 @@ new Trick(new Action("Minor Healing", "Recovers health points", 1, ["Intelligenc
 		result[target_obj.name] = `
 <div><b>${target_name}</b></div>
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
-<div><b>HEAL:</b> 50 + ${tricker_hability} + ${tricker_d20} = <b>${heal_result}</b> </div>
-`
+` + (test_result ? `<div><b>HEAL:</b> 50 + ${tricker_hability} + ${tricker_d20} = <b>${heal_result}</b> </div>` : '')
+
+        if (!test_result) {
+			return
+		}
 
 		if (target_obj.health.current + heal_result > target_obj.health.base) {
 			target_obj.health.current = target_obj.health.base
@@ -149,7 +155,7 @@ new Trick(new Action("Minor Healing", "Recovers health points", 1, ["Intelligenc
 	return result
 })
 
-new Trick(new Action("Conjurate Animal Spirit", "If successful, allows to try a second attack.", 3, ["Intelligence"], 1, [], ["Chimera"], false, false, 1), `
+new Trick(new Action("Conjurate Animal Spirit", "If successful, allows to try a second attack.", 13, ["Intelligence"], 1, [], ["Chimera"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -177,7 +183,7 @@ new Trick(new Action("Conjurate Animal Spirit", "If successful, allows to try a 
 	return result
 })
 
-new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for all hablities, 3 rounds, upon 1 player.", 3, ["Intelligence", "Charisma"], 1, [], ["Witch"], false, false, 1), `
+new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for all hablities, 3 rounds, upon 1 player.", 16, ["Intelligence", "Charisma"], 1, [], ["Witch"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -208,6 +214,11 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 <div><b>${target_name}</b></div>
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
+
+        if (!test_result) {
+			return
+		}
+
 		// setup status
 		const status_name = 'Blessed'
 		const status_obj = {
@@ -231,11 +242,12 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 	return result
 })
 
-new Trick(new Action("Curse", "Adds Cursed status, subtracts 3 hability points for all habilities, 3 rounds, upon 1 plyaer.", 3, ["Intelligence", "Charisma"], 1, [], ["Witch", "Circus Artist"], false, false, 1), `
-<div><b>TEST:</b> (TRH + D20) >= DIF</div>
+new Trick(new Action("Curse", "Adds Cursed status, subtracts 3 hability points for all habilities, 3 rounds, upon 1 plyaer.", 16, ["Intelligence", "Charisma"], 1, [], ["Witch", "Circus Artist"], false, false, 1), `
+<div><b>TEST:</b> (TRH + D20) - TH >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
 	<li>D20 - Tricker D20</li>
+	<li>TH - Target Hability</li>
 	<li>DIF - Difficulty</li>
 </ul>
 `, (action_name, tricker_name, hability, targets_names, tricker_d20) => {
@@ -261,6 +273,11 @@ new Trick(new Action("Curse", "Adds Cursed status, subtracts 3 hability points f
 <div><b>${target_name}</b></div>
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) - ${target_hability} >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
+
+        if (!test_result) {
+			return
+		}
+
 		// setup status
 		const status_name = 'Cursed'
 		const status_obj = {
@@ -284,7 +301,7 @@ new Trick(new Action("Curse", "Adds Cursed status, subtracts 3 hability points f
 	return result
 })
 
-new Trick(new Action("Alchemical Imobilization", "Adds Imobilized status.", 3, ["Intelligence", "Charisma"], 1, [], ["Alchemist"], false, false, 1), `
+new Trick(new Action("Alchemical Imobilization", "Adds Imobilized status.", 3, ["Intelligence", "Charisma"], 11, [], ["Alchemist"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -314,6 +331,11 @@ new Trick(new Action("Alchemical Imobilization", "Adds Imobilized status.", 3, [
 <div><b>${target_name}</b></div>
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) - ${target_hability} >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
+
+        if (!test_result) {
+			return
+		}
+
 		// setup status
 		const status_name = 'Imobilized'
 		const status_obj = {
@@ -332,7 +354,7 @@ new Trick(new Action("Alchemical Imobilization", "Adds Imobilized status.", 3, [
 	return result
 })
 
-new Trick(new Action("Frenesi", "The player is brought to an altered state of belic trance and gains hability points temporarily.", 2, ["Strength"], 1, [], ["Fighter", "Chimera"], false, false, 1), `
+new Trick(new Action("Frenesi", "The player is brought to an altered state of belic trance and gains hability points temporarily.", 13, ["Strength"], 1, [], ["Fighter", "Chimera"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -356,6 +378,10 @@ new Trick(new Action("Frenesi", "The player is brought to an altered state of be
 	result[tricker_name] = `
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
+
+    if (!test_result) {
+		return
+	}
 
 	// setup status
 	const status_name = 'Frenesi'
@@ -380,7 +406,7 @@ new Trick(new Action("Frenesi", "The player is brought to an altered state of be
 })
 
 
-new Trick(new Action("Mirrors and Smoke", "Allows the Circus Artist to Hide more easily.", 0, ["Dextrity", "Charisma"], 1, [], ["Circus Artist"], false, false, 1), `
+new Trick(new Action("Mirrors and Smoke", "Allows the Circus Artist to Hide more easily.", 0, ["Dextrity", "Charisma"], 11, [], ["Circus Artist"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -405,6 +431,10 @@ new Trick(new Action("Mirrors and Smoke", "Allows the Circus Artist to Hide more
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
 
+    if (!test_result) {
+		return
+	}
+
 	// setup status
 	const status_name = 'Hidden'
 	const status_obj = {
@@ -416,13 +446,12 @@ new Trick(new Action("Mirrors and Smoke", "Allows the Circus Artist to Hide more
 	return result
 })
 
-new Trick(new Action("Lullaby", "Sings or plays a lullaby, that calms down an enemy and avoids being hit by such enemy unless it's attacked by her. Adds Pacified status.", 0, ["Charisma"], 1, [], ["Circus Artist"], false, false, 1), `
-<div><b>TEST:</b> (TRH + D20) - (TAH + TD20) >= DIF</div>
+new Trick(new Action("Lullaby", "Sings or plays a lullaby, that calms down an enemy and avoids being hit by such enemy unless it's attacked by her. Adds Pacified status.", 13, ["Charisma"], 1, [], ["Circus Artist"], false, false, 1), `
+<div><b>TEST:</b> (TRH + D20) - TAH >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
 	<li>D20 - Tricker D20</li>
 	<li>TAH - Target Hability</li>
-	<li>TD20 - Target D20</li>
 	<li>DIF - Difficulty</li>
 </ul>
 `, (action_name, tricker_name, hability, targets_names, tricker_d20) => {
@@ -448,6 +477,11 @@ new Trick(new Action("Lullaby", "Sings or plays a lullaby, that calms down an en
 <div><b>${target_name}</b></div>
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) - ${target_hability} >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
+
+    	if (!test_result) {
+			return
+		}
+
 		// setup status
 		const status_name = 'Pacified'
 		const status_obj = {
@@ -462,13 +496,12 @@ new Trick(new Action("Lullaby", "Sings or plays a lullaby, that calms down an en
 	return result
 })
 
-new Trick(new Action("Hypnosis", "Makes someone else obey a single command.", 3, ["Charisma"], 1, [], ["Circus Artist"], false, false, 1), `
-<div><b>TEST:</b> (TRH + D20) - (TAH + TD20) >= DIF</div>
+new Trick(new Action("Hypnosis", "Makes someone else obey a single command.", 16, ["Charisma"], 1, [], ["Circus Artist"], false, false, 1), `
+<div><b>TEST:</b> (TRH + D20) - TAH >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
 	<li>D20 - Tricker D20</li>
 	<li>TAH - Target Hability</li>
-	<li>TD20 - Target D20</li>
 	<li>DIF - Difficulty</li>
 </ul>
 `, (action_name, tricker_name, hability, targets_names, tricker_d20) => {
@@ -494,6 +527,11 @@ new Trick(new Action("Hypnosis", "Makes someone else obey a single command.", 3,
 <div><b>${target_name}</b></div>
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) - ${target_hability} >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
+
+    	if (!test_result) {
+			return
+		}
+
 		// setup status
 		const status_name = 'Hypnotized'
 		const status_obj = {
@@ -514,13 +552,12 @@ new Trick(new Action("Hypnosis", "Makes someone else obey a single command.", 3,
 	return result
 })
 
-new Trick(new Action("Possession", "", 0, ["Intelligence", "Charisma"], 1, [], ["Messiah"], false, false, 1), `
-<div><b>TEST:</b> (TRH + D20) - (TAH + TD20) >= DIF</div>
+new Trick(new Action("Possession", "Adds Possessed status to the target, which is controlled by a supernatural entity for 2 turns.", 11, ["Intelligence", "Charisma"], 1, [], ["Messiah"], false, false, 1), `
+<div><b>TEST:</b> (TRH + D20) - TAH >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
 	<li>D20 - Tricker D20</li>
 	<li>TAH - Target Hability</li>
-	<li>TD20 - Target D20</li>
 	<li>DIF - Difficulty</li>
 </ul>
 `, (action_name, tricker_name, hability, targets_names, tricker_d20) => {
@@ -546,6 +583,11 @@ new Trick(new Action("Possession", "", 0, ["Intelligence", "Charisma"], 1, [], [
 <div><b>${target_name}</b></div>
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) - ${target_hability} >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
+
+    	if (!test_result) {
+			return
+		}
+
 		// setup status
 		const status_name = 'Possessed'
 		const status_obj = {
@@ -554,10 +596,10 @@ new Trick(new Action("Possession", "", 0, ["Intelligence", "Charisma"], 1, [], [
 		}
 
 		const old_turn = status_obj.turn
-		status_obj.turn = () => {old_turn(tricker_obj, status_obj)}
+		status_obj.turn = () => {old_turn(target_obj, status_obj)}
 
 		const old_end = status_obj.end
-		status_obj.end = () => {old_end(tricker_obj, status_obj)}
+		status_obj.end = () => {old_end(target_obj, status_obj)}
 
 		target_obj.status.push(status_obj)
 	})
@@ -565,7 +607,7 @@ new Trick(new Action("Possession", "", 0, ["Intelligence", "Charisma"], 1, [], [
 	return result
 })
 
-new Trick(new Action("Unstoppable Blade", "Allows the Swordsman to break the weapon of an enemy.", 0, ["Dextrity", "Agility"], 1, [], ["Swordsman"], false, false, 1), `
+new Trick(new Action("Unstoppable Blade", "Allows the Swordsman to break the weapon of an enemy.", 13, ["Dextrity", "Agility"], 1, [], ["Swordsman"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -607,7 +649,7 @@ new Trick(new Action("Unstoppable Blade", "Allows the Swordsman to break the wea
 	return result
 })
 
-new Trick(new Action("Cover Fire", "Gives cover fire to protect an ally for a turn.", 3, ["Dextrity"], 1, [], ["Shooter"], false, false, 1), `
+new Trick(new Action("Cover Fire", "Gives cover fire to protect an ally for a turn. Lasts 1 turn.", 16, ["Dextrity"], 1, [], ["Shooter"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -638,6 +680,11 @@ new Trick(new Action("Cover Fire", "Gives cover fire to protect an ally for a tu
 <div><b>${target_name}</b></div>
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
+
+    	if (!test_result) {
+			return
+		}
+
 		// setup status
 		const status_name = 'Covered'
 		const status_obj = {
@@ -661,7 +708,7 @@ new Trick(new Action("Cover Fire", "Gives cover fire to protect an ally for a tu
 	return result
 })
 
-new Trick(new Action("Accurate Shot", "Guarantees that if the shooter misses an attack, she causes at least 50 points of damage to the enemy.", 3, ["Dextrity"], 1, [], ["Shooter"], false, false, 1), `
+new Trick(new Action("Accurate Shot", "Guarantees that if the shooter misses an attack, she causes at least 50 points of damage to the enemy.", 16, ["Dextrity"], 1, [], ["Shooter"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -692,6 +739,11 @@ new Trick(new Action("Accurate Shot", "Guarantees that if the shooter misses an 
 <div><b>${target_name}</b></div>
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
+
+    	if (!test_result) {
+			return
+		}
+
 		// setup status
 		const status_name = 'Accurate Shot'
 		const status_obj = {

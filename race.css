@@ -3,10 +3,11 @@ div.races-container {
 	display: grid;
 	grid-template-columns: 20% 20% 20% 20% 20%; 
 	gap: 0;
+	background-color: var(--content-bg-color);
 }
 
 div.race-container {
-	border: solid 1px black;
+	border: solid 1px white;
 	padding: 15px;
 }
 
@@ -22,7 +23,7 @@ div.race-description {
 	text-align: justify;
 	height: 100px;
 	overflow: scroll;
-	border: solid 1px black;
+	border: solid 1px white;
 	padding: 15px;
 }
 

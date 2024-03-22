@@ -59,10 +59,13 @@ new Action("Seek", "Looks for a hidden enemy.", 10, null, 0, [], [], true, true,
 new Action("Insight", "Allows a player to get some important information from the world.", 7, null, 0, [], [], true, false, 1)
 new Action("Consume drug", "Consume a drug from the inventory.", 10, null, 0, [], [], true, true, 1)
 
+// some cause damage, some don't
+
 // Throw acid bottle
 // Throw poison bottle
-// Throw potion
 // Throw sedative
+
+// Throw potion
 // Throw medicine
 // Throw stimulant
 // Throw antidote
@@ -73,6 +76,5 @@ new Action("Consume drug", "Consume a drug from the inventory.", 10, null, 0, []
 //new Action("Fabricate Powder", "", 2, null, 0, [], ["Engineer"], true, false, 1)
 //new Action("Copy Action", "", 2, null, 0, [], ["Mirror"], true, false, 1)
 //new Action("Copy Habilities", "", 2, null, 0, [], ["Mirror"], true, false, 1)
-
 
 //new Content("actions", Action.get_html())

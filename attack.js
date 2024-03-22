@@ -56,12 +56,14 @@ class Attack {
 		const attacker_aptitude = attacker_obj.aptitudes[damage_type]
 		const action_level = attacker_obj.actions_obj.actions_levels[this.name] || 1
 
+		let attacker_weapons = 0
 		let weapons_damage = 0
 		attacker_obj.inventory_obj.equipped.forEach((item_index) => {
 			const item_name = attacker_obj.inventory_obj.items[item_index]
 			const item_obj = Item.objs[item_name]
 
 			if (Object.keys(Weapon.objs).includes(item_name)) {
+				attacker_weapons += item_obj.meta_obj.attack_points
 				weapons_damage += item_obj.price
 			}
 		})
@@ -85,20 +87,20 @@ class Attack {
 
 			let target_defenses = 0
 			target_obj.inventory_obj.equipped.forEach((item_index) => {
-				console.log('item_index', item_index)
+				//console.log('item_index', item_index)
 
 				const item_name = target_obj.inventory_obj.items[item_index]
-				console.log('item_name', item_name)
+				//console.log('item_name', item_name)
 
 				const item_obj = Item.objs[item_name]
-				console.log('item_obj', item_obj)
+				//console.log('item_obj', item_obj)
 
 				if (Object.keys(Defense.objs).includes(item_name) && item_obj.meta_obj.damage_types.includes(damage_type)) {
 					target_defenses += item_obj.meta_obj.defense_points
 				}
 			})
 
-			const test_result_value = ((attacker_hability + attacker_aptitude + attacker_d20) - (target_hability + target_resistance + target_defenses))
+			const test_result_value = ((attacker_hability + attacker_aptitude + attacker_weapons + attacker_d20) - (target_hability + target_resistance + target_defenses))
 			const test_result = test_result_value >= difficulty
 
 			// sets the proper result object with an object already containing the abbreviations
@@ -106,6 +108,7 @@ class Attack {
 				BD: this.base_damage,
 				AH: attacker_hability,
 				AA: attacker_aptitude,
+				AW: attacker_weapons,
 				D20: attacker_d20,
 				WD: weapons_damage,
 				AL: action_level,
@@ -157,50 +160,50 @@ class Attack {
 }
 
 
-new Attack(new Action("Punch", "Punches someone.", 0, ["Strength", "Agility", "Dextrity"], 1, [], [], true, true, 1), ['Impact'], 0)
-new Attack(new Action("Kick", "Kicks someone.", 1, ["Strength", "Agility", "Dextrity"], 1, [], [], true, true, 1), ['Impact'], 0)
-new Attack(new Action("Kneestrike", "Strikes someone with the knees.", 2, ["Strength", "Agility", "Dextrity"], 1, [], [], true, true, 1), ['Impact'], 0)
-new Attack(new Action("Weak spot strike", "Strikes someone in a weak spot.", 3, ["Strength", "Agility", "Dextrity"], 1, [], [], true, true, 1), ['Impact'], 0)
-new Attack(new Action("Armed attack", "Attacks someone using a weapon.", 0, ["Strength", "Agility", "Dextrity", "Intelligence", "Charisma"], 1, [], [], true, true, 1), ['Impact'], 0)
+new Attack(new Action("Punch", "Punches someone.", 6, ["Strength", "Agility", "Dextrity"], 1, [], [], true, true, 1), ['Impact'], 0)
+new Attack(new Action("Kick", "Kicks someone.", 9, ["Strength", "Agility", "Dextrity"], 1, [], [], true, true, 1), ['Impact'], 0)
+new Attack(new Action("Kneestrike", "Strikes someone with the knees.", 12, ["Strength", "Agility", "Dextrity"], 1, [], [], true, true, 1), ['Impact'], 0)
+new Attack(new Action("Weak spot strike", "Strikes someone in a weak spot.", 15, ["Strength", "Agility", "Dextrity"], 1, [], [], true, true, 1), ['Impact'], 0)
 
-new Attack(new Action("Onslaught", "The attacker runs furiously and simply removes an enemy from her way with a strike of her weapon.", 1, ["Strength"], 1, [], ["Fighter"], false, true, 1), ['Impact', 'Cutting'], 0)
-new Attack(new Action("Bloody Jump", "The attacker jumps over an enemy and with a dimensional advantage strikes the enemy using the weight of her weapon.", 2, ["Strength", "Dextrity"], 1, [], ["Fighter", "Swordsman"], false, true, 1), ['Impact', 'Perfuration', 'Cutting'], 0)
+new Attack(new Action("Armed attack", "Attacks someone using a weapon. It's a generic action for when a player wants to (more probably) hit an attack using a weapon, even if causing low damage.", 5, ["Strength", "Agility", "Dextrity", "Intelligence", "Charisma"], 1, [], [], true, true, 1), ['Impact'], 0)
 
-new Attack(new Action("Shock blade", "", 1, ["Dextrity"], 1, [], ["Swordsman"], false, false, 1), ['Cutting'], 0)
-new Attack(new Action("Instant perfuration", "", 2, ["Agility", "Dextrity"], 1, [], ["Swordsman"], false, false, 2), ['Perfuration'], 0)
-new Attack(new Action("Tornado", "", 3, ["Agility", "Dextrity"], 1, [], ["Swordsman"], false, false, 2), ['Cutting'], 0)
+new Attack(new Action("Onslaught", "The attacker runs furiously and simply removes an enemy from her way with a strike of her weapon.", 11, ["Strength"], 1, [], ["Fighter"], false, true, 1), ['Impact', 'Cutting'], 0)
+new Attack(new Action("Bloody Jump", "The attacker jumps over an enemy and with a dimensional advantage strikes the enemy using the weight of her weapon.", 16, ["Strength", "Dextrity"], 1, [], ["Fighter", "Swordsman"], false, true, 1), ['Impact', 'Perfuration', 'Cutting'], 0)
 
-new Attack(new Action("Spectral discharge", "", 1, ["Intelligence"], 1, [], ["Witch", "Messiah"], false, true, 1), ['Invocation'], 0)
-new Attack(new Action("Arcane spirits", "", 2, ["Intelligence"], 1, [], ["Witch", "Messiah"], false, true, 1), ['Invocation'], 0)
-new Attack(new Action("Dangerous witchcraft", "", 3, ["Intelligence"], 1, [], ["Witch"], false, true, 1), ['Invocation'], 0)
+new Attack(new Action("Shock blade", "", 11, ["Dextrity"], 1, [], ["Swordsman"], false, false, 1), ['Cutting'], 0)
+new Attack(new Action("Instant perfuration", "", 13, ["Agility", "Dextrity"], 1, [], ["Swordsman"], false, false, 2), ['Perfuration'], 0)
+new Attack(new Action("Tornado", "", 16, ["Agility", "Dextrity"], 1, [], ["Swordsman"], false, false, 2), ['Cutting'], 0)
 
-new Attack(new Action("Minor Elemental Sphere", "", 0, ["Intelligence"], 1, [], ["Witch", "Alchemist"], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
-new Attack(new Action("Alchemical Elemental Damage", "", 2, ["Intelligence"], 1, [], ["Alchemist"], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
+new Attack(new Action("Spectral discharge", "", 11, ["Intelligence"], 1, [], ["Witch", "Messiah"], false, true, 1), ['Invocation'], 0)
+new Attack(new Action("Arcane spirits", "", 13, ["Intelligence"], 1, [], ["Witch", "Messiah"], false, true, 1), ['Invocation'], 0)
+new Attack(new Action("Dangerous witchcraft", "", 16, ["Intelligence"], 1, [], ["Witch"], false, true, 1), ['Invocation'], 0)
 
-new Attack(new Action("Acid Bubble", "", 1, ["Intelligence"], 1, [], ["Alchemist", "Chimera"], false, true, 1), ['Acid'], 0)
-new Attack(new Action("Feral outbreak", "", 2, ["Strength"], 1, [], ["Chimera"], false, true, 1), ['Impact', 'Cutting', 'Perfuration'], 0)
+new Attack(new Action("Minor Elemental Sphere", "", 11, ["Intelligence"], 1, [], ["Witch", "Alchemist"], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
+new Attack(new Action("Alchemical Elemental Damage", "", 16, ["Intelligence"], 1, [], ["Alchemist"], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
 
-new Attack(new Action("Infernal hand", "", 1, ["Intelligence"], 1, [], ["Messiah"], false, true, 1), ['Invocation'], 0)
-new Attack(new Action("Purgatory", "", 2, ["Charisma"], 2, [], ["Messiah"], false, true, 1), ['Psychic'], 0)
-new Attack(new Action("Infinite Love of the Divinity", "", 3, ["Intelligence"], 1, [], ["Messiah"], false, true, 1), ['Invocation'], 0)
+new Attack(new Action("Feral outbreak", "", 11, ["Strength"], 1, [], ["Chimera"], false, true, 1), ['Impact', 'Cutting', 'Perfuration'], 0)
+new Attack(new Action("Acid Bubble", "", 13, ["Intelligence"], 1, [], ["Alchemist", "Chimera"], false, true, 1), ['Acid'], 0)
 
-new Attack(new Action("Fast shot", "", 1, ["Agility"], 1, [], ["Shooter"], false, true, 1), ['Shooting'], 0)
-new Attack(new Action("Pew Pew", "", 2, ["Dextrity"], 1, [], ["Shooter"], false, true, 1), ['Shooting'], 0)
+new Attack(new Action("Infernal hand", "", 11, ["Intelligence"], 5, [], ["Messiah"], false, true, 1), ['Invocation'], 0)
+new Attack(new Action("Purgatory", "", 13, ["Charisma"], 10, [], ["Messiah"], false, true, 1), ['Psychic'], 0)
+new Attack(new Action("Infinite Love of the Divinity", "", 16, ["Intelligence"], 1, [], ["Messiah"], false, true, 1), ['Invocation'], 0)
 
-new Attack(new Action("Kwink Blade", "", 1, ["Agility", "Dextrity"], 1, [], ["Engineer"], false, true, 1), ['Cutting', 'Perfuration'], 0)
-new Attack(new Action("Kwink Hammer", "", 2, ["Dextrity", "Strength"], 1, [], ["Engineer"], false, true, 1), ['Impact'], 0)
-new Attack(new Action("Lightning", "", 3, ["Intelligence", "Dextrity"], 1, [], ["Engineer"], false, true, 2), ['Electricity'], 0)
+new Attack(new Action("Fast shot", "", 11, ["Agility"], 5, [], ["Shooter"], false, true, 1), ['Shooting'], 0)
+new Attack(new Action("Pew Pew", "", 13, ["Dextrity"], 10, [], ["Shooter"], false, true, 1), ['Shooting'], 0)
 
-new Attack(new Action("Suffering Spectacle", "", 1, ["Agility", "Dextrity"], 1, [], ["Circus Artist"], false, true, 1), ['Cutting'], 0)
-new Attack(new Action("Bloody Acrobacies", "", 2, ["Dextrity", "Strength"], 1, [], ["Circus Artist"], false, true, 1), ['Impact'], 0)
+new Attack(new Action("Kwink Blade", "", 11, ["Agility", "Dextrity"], 1, [], ["Engineer"], false, true, 1), ['Cutting', 'Perfuration'], 0)
+new Attack(new Action("Kwink Hammer", "", 13, ["Dextrity", "Strength"], 1, [], ["Engineer"], false, true, 1), ['Impact'], 0)
+new Attack(new Action("Amplified Electrical Discharge", "", 16, ["Intelligence", "Dextrity"], 1, [], ["Engineer"], false, true, 2), ['Electricity'], 0)
 
-new Attack(new Action("Blood needles", "", 0, ["Intelligence"], 1, ["Ghoul"], [], false, true, 1), ['Perfuration'], 0)
-new Attack(new Action("Gluttonous thrust", "", 1, ["Agility", "Dextrity"], 1, ["Ghoul"], [], false, true, 1), ['Cutting', 'Perfuration'], 0)
-new Attack(new Action("Flash Slay", "", 1, ["Agility"], 1, ["Ghoul"], [], false, true, 1), ['Cutting'], 0)
+new Attack(new Action("Suffering Spectacle", "", 11, ["Agility", "Dextrity"], 1, [], ["Circus Artist"], false, true, 1), ['Cutting'], 0)
+new Attack(new Action("Bloody Acrobacies", "", 13, ["Dextrity", "Strength"], 1, [], ["Circus Artist"], false, true, 1), ['Impact'], 0)
 
-new Attack(new Action("Elemental sphere", "", 0, ["Intelligence"], 1, ["Elemental"], [], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
-new Attack(new Action("Elemental spikes", "", 1, ["Intelligence"], 1, ["Elemental"], [], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
-new Attack(new Action("Elemental spiral", "", 2, ["Intelligence"], 1, ["Elemental"], [], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
-new Attack(new Action("Elemental web", "", 3, ["Intelligence"], 1, ["Elemental"], [], false, true, 2), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
+new Attack(new Action("Blood needles", "", 11, ["Intelligence"], 1, ["Ghoul"], [], false, true, 1), ['Perfuration'], 0)
+new Attack(new Action("Gluttonous thrust", "", 13, ["Agility", "Dextrity"], 1, ["Ghoul"], [], false, true, 1), ['Cutting', 'Perfuration'], 0)
+new Attack(new Action("Flash Slay", "", 16, ["Agility"], 1, ["Ghoul"], [], false, true, 1), ['Cutting'], 0)
+
+new Attack(new Action("Elemental sphere", "", 11, ["Intelligence"], 1, ["Elemental"], [], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
+new Attack(new Action("Elemental spikes", "", 13, ["Intelligence"], 1, ["Elemental"], [], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
+new Attack(new Action("Elemental spiral", "", 16, ["Intelligence"], 1, ["Elemental"], [], false, true, 1), ['Air', 'Water', 'Earth', 'Fire', 'Cheese', 'Electricity'], 0)
 
 

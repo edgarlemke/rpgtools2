@@ -8,7 +8,6 @@ div.overlay {
 }
 
 div.modal {
-	background-color: white;
 	width: 33%;
 	min-height: 25vh;
 	padding: 25px;
@@ -16,9 +15,12 @@ div.modal {
 	margin: 50px auto;
 	display: flex;
 	flex-direction: column;
+
+	background-color: var(--content-bg-color);
 }
 
 div.modal-header {
+	background-color: var(--content-bg-color);
 }
 
 div.modal-title {
@@ -32,4 +34,6 @@ div.modal-close-button {
 
 div.modal-body {
 	flex: 1;
+
+	background-color: var(--content-bg-color);
 }

@@ -129,8 +129,12 @@ class Char {
 				status_obj.duration -= 1
 			},
 			end: (target_obj, status_obj) => {
+				console.log('end', target_obj, status_obj)
 				// clean Possessed status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
+					console.log('status_obj', status_obj)
+					console.log('status_obj_', status_obj_)
+
 					return status_obj !== status_obj_
 				})
 			}
@@ -209,8 +213,8 @@ class Char {
 		},
 	}
 
-	static base_health_points = 0
-	static health_points_per_level = 100
+	static base_health_points = 3000
+	static health_points_per_level = 1000
 
 	constructor (name, age, level, race, class_, primary_motivation, secondary_motivations, virtues, defects, player_stats_obj, story, aptitudes, resistances, actions_obj) {
 		Char.objs[name] = this

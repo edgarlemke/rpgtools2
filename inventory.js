@@ -376,19 +376,20 @@ class InventoryView {
 			//'Mentalist': ['Instrument', 'Wand'],
 			'Chimera' : ['Wand'],
 			'Demonologist' : ['Wand', 'Grimorium'],
-			'Messiah' : ['Wand', 'Grimorium'],
+			'Messiah' : ['Wand', 'Grimorium', 'Sinister Deck'],
 			//'Slime' : ['Wand'], // can use any weapon according to habilities
+			'Circus Artist' : ['Instrument', 'Sinister Deck'],
 
 			'Ghoul' : ['Ghoul Strength Damage Kit', 'Ghoul Agility Damage Kit'],
 			'Elemental' : ['Wand'],
-			'Undead' : ['Wand', 'Grimorium']
+			//'Undead' : ['Wand', 'Grimorium']
 		}
 
 		const char_name = InventoryView.char_selector.selectedOptions[0].innerText
 		const char_obj = Char.objs[char_name]
 		const highest_stats = char_obj.get_highest_stats()
 
-		console.log('char_obj', char_obj)
+		//console.log('char_obj', char_obj)
 
 		const buy_ammo = function (item_name) {
 			const max_spending = 20 + (dice(3) * 10)
