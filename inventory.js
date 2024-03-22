@@ -192,12 +192,16 @@ class InventoryView {
 
 		inventory_obj.items.forEach((item_name) => {
 			const equippable = Item.objs[item_name].equippable
+
+			// check if item is already equipped
+			const is_equipped = inventory_obj.equipped.includes(item_index)
+
 			const tr = document.createElement('tr')
 			tr.setAttribute('data-item-name', item_name)
 			tr.setAttribute('data-item-index', item_index)
 			tr.innerHTML = `<td>${item_name}</td>
 <td>
-	${equippable ? '<button onclick="InventoryView.toggle_equip(this)">Equip</button>' : ''}
+	${equippable ? '<button onclick="InventoryView.toggle_equip(this)">' + (!is_equipped ? 'Equip' : 'Unequip') + '</button>' : ''}
 	<button onclick="InventoryView.drop(this)">Drop</button>
 	<button onclick="InventoryView.sell(this)">Sell</button>
 </td>`
