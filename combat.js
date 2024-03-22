@@ -12,10 +12,7 @@ class Combat {
 
 		// iter over obj_copy to get each char agility and add it to the given values
 		Object.keys(order_obj_copy).forEach((char_name) => {
-			console.log('char_name', char_name)
 			const char_obj = Char.objs[char_name]
-			console.log('char_obj', char_obj)
-
 			order_obj_copy[char_name] += char_obj.stats_objs.current.agility
 		})
 		console.log('order_obj_copy', order_obj_copy)
@@ -40,10 +37,19 @@ class Combat {
 
 			return diff
 		})
-
 		console.log('tmp_sorter_order', tmp_sorted_order)
-		console.log('ties', ties)
-		this.ties = ties
+
+		if (Object.keys(ties).length > 0) {
+			let ties_msg = ''
+
+			Object.keys(ties).forEach((tie_value) => {
+				const tie_array = ties[tie_value]
+				ties_msg += `${tie_array.length} tied chars at combat order ${tie_value}: ${tie_array.join(', ')}`
+			})
+
+			new Modal('Tie at combat order', ties_msg)
+			return
+		}
 
 		// sorted_order is an array to keep combat order sorting
 		const sorted_order = []
@@ -65,8 +71,6 @@ class Combat {
 		this.turn = (this.turn + 1) % this.sorted_order.length
 
 		char_obj.status.forEach((status_obj) => {
-			console.log('skip status_obj', status_obj)
-
 			if (Object.keys(status_obj).includes('duration')) {
 
 				if (status_obj.duration > 0) {
@@ -74,7 +78,6 @@ class Combat {
 				}
 
 				if (status_obj.duration == 0) {
-					console.log('status end', status_obj)
 					status_obj.end()
 				}
 				
@@ -285,124 +288,10 @@ class CombatView {
 			order_obj[team_member] = team_member_initiative
 		}
 
-		const combat_obj = new Combat(combat_name, order_obj)
-		console.log('sorted_order', combat_obj.sorted_order)
-
-		if (Object.keys(combat_obj.ties).length > 0) {
-			let ties_modal_content = `<small>Bigger values mean more precedence in combat order.</small>`
-
-			Object.keys(combat_obj.ties).forEach((tie_value) => {
-				const tie_array = combat_obj.ties[tie_value]
-
-				// fast dirty way for getting select options
-				let options_html = ""
-				for (let i = 0; i < tie_array.length; i++) {
-					options_html += `<option>${Number(tie_value) + i}</option>`
-				}
-
-				let container_html = ""
-				for (let i = 0; i < tie_array.length; i++) {
-					container_html += `
-<div>
-	<b>${tie_array[i]}</b>
-	<select id="combat-tie-solve-${tie_value}-select-${i}" class="combat-tie-solve-select">
-		${options_html}
-	</select>
-</div>`
-				}
-
-				ties_modal_content += `
-<div id="combat-tie-solve-${tie_value}" class="combat-tie-solve">
-	<span>${tie_array.length} tied chars at combat order ${tie_value}: ${tie_array.join(', ')}</span><br/>
-	<span>Solve tie choosing the order:</span>
-
-	<div>
-		<div class="combat-tie-solve-container">
-			${container_html}
-		</div>
-	</div>
-</div>
-`
-			})
-
-			ties_modal_content +=`<button onclick="CombatView.solve_ties('${combat_name}')">Solve ties</button>`
-
-			new Modal('Tie at combat order', ties_modal_content)
-		}
+		new Combat(combat_name, order_obj)
 
 		CombatView.update_combat()
 		CombatView.clean_creation_team_members()
-	}
-
-	static solve_ties (combat_name) {
-		const combat_obj = Combat.objs[combat_name]
-		console.log('combat_obj', combat_obj)
-
-		const combat_tie_solve_select = document.getElementsByClassName('combat-tie-solve-select')
-		console.log(combat_tie_solve_select)
-
-		const solved_values = {}
-
-		Object.keys(combat_obj.ties).forEach((tie_value) => {
-			console.log('tie_value', tie_value)	
-
-			const solved_value = {}
-
-			for (let i = 0; i < combat_tie_solve_select.length; i++) {
-				let select = combat_tie_solve_select[i]
-				if (! select.id.includes('combat-tie-solve-' + tie_value)) {
-					continue
-				}
-
-				const char_name = combat_obj.ties[tie_value][i]
-				const value = Number( select.selectedOptions[0].innerText )
-
-				solved_value[char_name] = value
-			}
-
-			solved_values[tie_value] = solved_value
-		})
-
-		console.log('solved_values', solved_values)
-
-		const new_sorted_order = []
-
-		// iter over the old sorted order of the combat
-		for (let i = 0; i < combat_obj.sorted_order.length;) {
-			const order_array = combat_obj.sorted_order[i]
-
-			let found = false
-			let found_tie_value = 0
-			Object.keys(solved_values).forEach((tie_value) => {
-				if (found) {
-					return
-				}
-				Object.keys(solved_values[tie_value]).forEach((char_name) => {
-					if (found) {
-						return
-					}
-
-					if (char_name == order_array[0]) {
-						found = true
-						found_tie_value = tie_value
-					}
-				})
-
-				if (solved_values[tie_value].length > 1) {
-					alert('tie at ' + tie_value)
-				}
-			})
-
-			if (! found) {
-				new_sorted_order.push(order_array)
-				continue
-			}
-
-			//let tied_chars_ct = Object.keys(solved_values[tie_value]).length
-
-			i++
-		}
-
 	}
 
 	static select_combat () {
@@ -703,7 +592,7 @@ class CombatView {
 		const damage_type = attack_damage_type.selectedOptions[0].innerText.toLowerCase()
 
 		const result = action_obj.meta_obj.act(attacker_name, hability, targets_names, attacker_d20, damage_type)
-		//console.log(result)
+		console.log(result)
 
 
 		//
@@ -715,7 +604,7 @@ class CombatView {
 <section class="modal_section">
 	<h4>Legend</h4>
 
-	<div><b>TEST:</b> ((AH + AA + AW + D20) - (TH + TR + TD)) >= DIF</div>
+    <div><b>TEST:</b> ((AH + AA + AW + D20) - (TH + TR + TD)) >= DIF</div>
 	<div><b>ATTACK DAMAGE (AD):</b> BD + ((AH + AA + D20 + WD) * (1 + ((AL - 1) * 0.2)))</div>
 	<div><b>DAMAGE:</b> ((AD - (TR + TD)) / TC) * DIF * MUL</div>
 	<div><small>When damage isn't integer, it's rounded down.</small></div>
@@ -724,13 +613,13 @@ class CombatView {
 		<li>BD - Base Damage</li>
 		<li>AH - Attacker Hability</li>
 		<li>AA - Attacker Aptitude in Damage Type</li>
-		<li>AW - Attacker Weapon Attack Points</li>
+        <li>AW - Attacker Weapon Attack Points</li>
 		<li>D20 - Attacker D20</li>
 		<li>WD - Weapon Damage</li>
 		<li>AL - Action Level</li>
 		<li>TH - Target Hability</li>
 		<li>TR - Target Resistance against Damage Type</li>
-		<li>TD - Target Defenses Defense Points</li>
+        <li>TD - Target Defenses Defense Points</li>
 		<li>TC - Target Count</li>
 		<li>DIF - Action Difficulty</li>
 		<li>MUL - Multiplier - 2 if D20 == 20, else 1</li>
@@ -748,10 +637,10 @@ class CombatView {
 			template.innerHTML = `
 <div class="combat-attack-target-result">
 	<div><b>${target_name}</b></div>
-	<div><b>TEST:</b> ((${r.AH} + ${r.AA} + ${r.AW} + ${r.D20}) - (${r.TH} + ${r.TR} + ${r.TD})) = ${r.test_result_value} >= ${r.DIF} -> <b>${r.test_result ? 'Passed' : 'Failed'}</b></div>
+    <div><b>TEST:</b> ((${r.AH} + ${r.AA} + ${r.AW} + ${r.D20}) - (${r.TH} + ${r.TR} + ${r.TD})) = ${r.test_result_value} >= ${r.DIF} -> <b>${r.test_result ? 'Passed' : 'Failed'}</b></div>
 <!--	${r.test_result ? `<div><b>DAMAGE:</b> (((${r.AH} + ${r.AA} + ${r.D20} + ${r.DIF} + ${r.WD}) - (${r.TR} + ${r.TD})) / ${r.TC}) * ${r.D20 == 20 ? 3 : 1} = <b>${r.damage}</b></div>` : ''} -->
     ${r.test_result ? `<div><b>ATTACK DAMAGE (AD):</b> ${r.BD} + ((${r.AH} + ${r.AA} + ${r.D20} + ${r.WD}) * (1 + ((${r.AL} - 1) * 0.2))) = ${r.AD}` : ''}
-	${r.test_result ? `<div><b>DAMAGE:</b> ((${r.AD} - (${r.TR} + ${r.TD})) / ${r.TC}) * ${r.DIF} * ${r.D20 == 20 ? 2 : 1} = <b>${r.damage}</b></div>` : ''}
+    ${r.test_result ? `<div><b>DAMAGE:</b> ((${r.AD} - (${r.TR} + ${r.TD})) / ${r.TC}) * ${r.DIF} * ${r.D20 == 20 ? 2 : 1} = <b>${r.damage}</b></div>` : ''}
 	${r.test_result ? `<div><button onclick="CombatView.add_sub_aptitude_resistance('${target_name}', 'resistances', '${damage_type}', 'add', this)">Add Resistance point</button></div>` : ''}
 </div>`
 
