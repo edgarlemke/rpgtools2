@@ -67,6 +67,11 @@ class Char {
 		"Inconsequential"
 	]
 
+	static toll_obj = {
+		stats: {Strength: 0, Agility: 0, Dextrity: 0, Intelligence: 0, Charisma: 0},
+		health: 0
+	}
+
 	static status_objs = {
 		Alive    : {},
 		Dead     : {},
@@ -76,8 +81,19 @@ class Char {
 		'Severely Injured' : {},
 		Stimulated : {},
 		Safeguarded : {},
-		Imobilized : {},
 
+		Imobilized : {turns: 1, duration: 1,
+			turn: (target_obj, status_obj) => {
+				status_obj.duration -= 1
+			},
+			end: (target_obj, status_obj) => {
+				// clean Imobilized status object
+				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+			},
+			toll: {...Char.toll_obj}
+		},
         'Unstoppable Blade' : {turns: 1, duration: 1,
 			turn: (target_obj, status_obj) => {
 				status_obj.duration -= 1
@@ -87,7 +103,8 @@ class Char {
 				target_obj.status = target_obj.status.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
-			}
+			},
+			toll: {...Char.toll_obj}
 		},
 		Covered : {turns: 1, duration: 1,
 			turn: (target_obj, status_obj) => {
@@ -98,7 +115,8 @@ class Char {
 				target_obj.status = target_obj.status.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
-			}
+			},
+			toll: {...Char.toll_obj}
 		},
 		'Accurate Shot' : {turns: 1, duration: 1,
 			turn: (target_obj, status_obj) => {
@@ -109,7 +127,8 @@ class Char {
 				target_obj.status = target_obj.status.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
-			}
+			},
+			toll: {...Char.toll_obj}
 		},
 
 		Pacified : {char_name: null},
@@ -122,22 +141,24 @@ class Char {
 				target_obj.status = target_obj.status.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
-			}
+			},
+			toll: {...Char.toll_obj}
 		},
 		Possessed : {turns: 2, duration: 2,
 			turn: (target_obj, status_obj) => {
 				status_obj.duration -= 1
 			},
 			end: (target_obj, status_obj) => {
-				console.log('end', target_obj, status_obj)
+				//console.log('end', target_obj, status_obj)
 				// clean Possessed status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
-					console.log('status_obj', status_obj)
-					console.log('status_obj_', status_obj_)
+					//console.log('status_obj', status_obj)
+					//console.log('status_obj_', status_obj_)
 
 					return status_obj !== status_obj_
 				})
-			}
+			},
+			toll: {...Char.toll_obj}
 		},
 
 		Frenesi  : {turns: 3, duration: 3, points: 3,
@@ -154,7 +175,8 @@ class Char {
 				Object.keys(target_obj.stats_objs.current).forEach((key) => {
 					target_obj.stats_objs.current[key] -= status_obj.points
 				})
-			}
+			},
+			toll: {...Char.toll_obj}
 		},
 		Blessed  : {turns: 3, duration: 3, points: 3,
 			turn: (target_obj, status_obj) => {
@@ -170,7 +192,8 @@ class Char {
 				Object.keys(target_obj.stats_objs.current).forEach((key) => {
 					target_obj.stats_objs.current[key] -= status_obj.points
 				})
-			}
+			},
+			toll: {...Char.toll_obj}
 		},
 		Cursed   : {turns: 3, duration: 3, points: 3,
 			turn: (target_obj, status_obj) => {
@@ -186,13 +209,15 @@ class Char {
 				Object.keys(target_obj.stats_objs.current).forEach((key) => {
 					target_obj.stats_objs.current[key] += status_obj.points
 				})
-			}
+			},
+			toll: {...Char.toll_obj}
 		},
 		//Poisoned : {turns: 0, duration: 0, points: 100},
 		Sedated  : {turns: 3, duration: 3, points: 1,
 			turn: (target_obj, status_obj) => {
 				Object.keys(target_obj.stats_objs.current).forEach((key) => {
 					target_obj.stats_objs.current[key] -= status_obj.points
+					status_obj.toll.stats[key] -= status_obj.points
 				})
 				status_obj.duration -= 1
 			},
@@ -209,7 +234,8 @@ class Char {
 
 				// add Sleeping status
 				target_obj.status.push({name: 'Sleeping'})
-			}
+			},
+			toll: {...Char.toll_obj}
 		},
 	}
 
@@ -284,6 +310,23 @@ class Char {
 		// console.log(highest_stats)
 
 		return highest_stats
+	}
+
+	get_status_stats () {
+		const status_stats = new Stats(0, 0, 0, 0, 0)
+
+		// iter over char status, adding tolls for habilities
+		this.status.forEach((status_obj) => {
+			if (!Object.keys(status_obj).includes('toll')) {
+				return
+			}
+
+			Object.keys(status_obj.toll.stats).forEach((hability) => {
+				status_stats[hability] += status_obj.toll.stats[hability]
+			})
+		})
+
+		return status_stats
 	}
 
 	static actions_points = 10
@@ -513,7 +556,8 @@ class CharView {
 		<table id="char-stats">
 			<thead>
 				<tr>
-					<th colspan="6">Stats</th>
+					<th colspan="6">Base</th>
+					<th colspan="2">Current</th>
 				</tr>
 				<tr>
 					<th></th>
@@ -522,6 +566,8 @@ class CharView {
 					<th>Player</th>
 					<th>Items</th>
 					<th>Total</th>
+					<th>Status</th>
+					<th>Current</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -532,6 +578,8 @@ class CharView {
 					<td><input type="number" id="char-stat-player-strength" value="0" onchange="CharView.fill_total_stats()" /></td>
 					<td id="char-stat-items-strength">></td>
 					<td id="char-stat-total-strength"></td>
+					<td id="char-stat-status-strength"></td>
+					<td id="char-stat-current-strength"></td>
 				</tr>
 				<tr>
 					<td>Agility</td>
@@ -540,6 +588,8 @@ class CharView {
 					<td><input type="number" id="char-stat-player-agility" value="0" onchange="CharView.fill_total_stats()" /></td>
 					<td id="char-stat-items-agility"></td>
 					<td id="char-stat-total-agility"></td>
+					<td id="char-stat-status-agility"></td>
+					<td id="char-stat-current-agility"></td>
 				</tr>
 				<tr>
 					<td>Dextrity</td>
@@ -548,6 +598,8 @@ class CharView {
 					<td><input type="number" id="char-stat-player-dextrity" value="0" onchange="CharView.fill_total_stats()" /></td>
 					<td id="char-stat-items-dextrity"></td>
 					<td id="char-stat-total-dextrity"></td>
+					<td id="char-stat-status-dextrity"></td>
+					<td id="char-stat-current-dextrity"></td>
 				</tr>
 				<tr>
 					<td>Intelligence</td>
@@ -556,6 +608,8 @@ class CharView {
 					<td><input type="number" id="char-stat-player-intelligence" value="0" onchange="CharView.fill_total_stats()" /></td>
 					<td id="char-stat-items-intelligence"></td>
 					<td id="char-stat-total-intelligence"></td>
+					<td id="char-stat-status-intelligence"></td>
+					<td id="char-stat-current-intelligence"></td>
 				</tr>
 				<tr>
 					<td>Charisma</td>
@@ -564,7 +618,25 @@ class CharView {
 					<td><input type="number" id="char-stat-player-charisma" value="0" onchange="CharView.fill_total_stats()" /></td>
 					<td id="char-stat-items-charisma"></td>
 					<td id="char-stat-total-charisma"></td>
+					<td id="char-stat-status-charisma"></td>
+					<td id="char-stat-current-charisma"></td>
 				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="char-div" id="char-status">
+		<table>
+			<thead>
+				<tr>
+					<th colspan="3">Status</th>
+				</tr>
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Setting</th>
+			</thead>
+			<tbody id="char-status-tbody">
 			</tbody>
 		</table>
 	</div>
@@ -971,6 +1043,21 @@ class CharView {
 		}
 	}
 
+	static _get_status_stats_obj () {
+		if (CharView.mode == 'create') {
+			return new Stats(0, 0, 0, 0, 0)
+		}
+		else if (CharView.mode == 'edit') {
+			const char_name = CharView.selector.selectedOptions[0].innerText
+			if (Char.objs[char_name]) {
+				return Char.objs[char_name].get_status_stats()		
+			}
+			else {
+				return new Stats(0, 0, 0, 0, 0)
+			}
+		}
+	}
+
 	static fill_items_stats () {
 		const stats_obj = CharView._get_items_stats_obj()
 
@@ -1002,6 +1089,25 @@ class CharView {
 		CharView.stat_total_dextrity.innerHTML = total_stats.dextrity
 		CharView.stat_total_intelligence.innerHTML = total_stats.intelligence
 		CharView.stat_total_charisma.innerHTML = total_stats.charisma
+	}
+
+	static fill_status_stats () {
+		const status_stats = CharView._get_status_stats_obj()
+		// console.log('status_stats', status_stats)
+
+		CharView.stat_status_strength.innerHTML = status_stats.strength
+		CharView.stat_status_agility.innerHTML = status_stats.agility
+		CharView.stat_status_dextrity.innerHTML = status_stats.dextrity
+		CharView.stat_status_intelligence.innerHTML = status_stats.intelligence
+		CharView.stat_status_charisma.innerHTML = status_stats.charisma
+	}
+
+	static fill_current_stats () {
+		CharView.stat_current_strength.innerHTML = Number(CharView.stat_total_strength.innerHTML) + Number(CharView.stat_status_strength.innerHTML)
+		CharView.stat_current_agility.innerHTML = Number(CharView.stat_total_agility.innerHTML) + Number(CharView.stat_status_agility.innerHTML)
+		CharView.stat_current_dextrity.innerHTML = Number(CharView.stat_total_dextrity.innerHTML) + Number(CharView.stat_status_dextrity.innerHTML)
+		CharView.stat_current_intelligence.innerHTML = Number(CharView.stat_total_intelligence.innerHTML) + Number(CharView.stat_status_intelligence.innerHTML)
+		CharView.stat_current_charisma.innerHTML = Number(CharView.stat_total_charisma.innerHTML) + Number(CharView.stat_status_charisma.innerHTML)
 	}
 
 	static _get_char_actions () {
@@ -1159,6 +1265,8 @@ class CharView {
 		CharView.fill_class_stats()
 		CharView.fill_items_stats()
 		CharView.fill_total_stats()
+		CharView.fill_status_stats()
+		CharView.fill_current_stats()
 
 		CharView.story.value = ''
 
@@ -1241,6 +1349,8 @@ class CharView {
 		CharView.fill_class_stats()
 		CharView.fill_items_stats()
 		CharView.fill_total_stats()
+		CharView.fill_status_stats()
+		CharView.fill_current_stats()
 
 		CharView.story.value = char_obj.story
 
@@ -1375,6 +1485,18 @@ CharView.stat_total_dextrity = document.getElementById("char-stat-total-dextrity
 CharView.stat_total_intelligence = document.getElementById("char-stat-total-intelligence")
 CharView.stat_total_charisma = document.getElementById("char-stat-total-charisma")
 
+CharView.stat_status_strength = document.getElementById("char-stat-status-strength")
+CharView.stat_status_agility = document.getElementById("char-stat-status-agility")
+CharView.stat_status_dextrity = document.getElementById("char-stat-status-dextrity")
+CharView.stat_status_intelligence = document.getElementById("char-stat-status-intelligence")
+CharView.stat_status_charisma = document.getElementById("char-stat-status-charisma")
+
+CharView.stat_current_strength = document.getElementById("char-stat-current-strength")
+CharView.stat_current_agility = document.getElementById("char-stat-current-agility")
+CharView.stat_current_dextrity = document.getElementById("char-stat-current-dextrity")
+CharView.stat_current_intelligence = document.getElementById("char-stat-current-intelligence")
+CharView.stat_current_charisma = document.getElementById("char-stat-current-charisma")
+
 CharView.story = document.getElementById("char-story")
 
 CharView.actions_slots = document.getElementById("char-actions-slots")
@@ -1382,6 +1504,9 @@ CharView.total_action_points = document.getElementById("char-total-action-points
 CharView.free_action_points = document.getElementById("char-free-action-points")
 
 CharView.aptitudes_and_resistances_container = document.getElementById("char-aptitudes-and-resistances-container")
+
+CharView.status = document.getElementById("chat-status")
+CharView.status_tbody = document.getElementById("chat-status-tbody")
 
 CharView.aptitude_air = document.getElementById('char-aptitude-air')
 CharView.resistance_air = document.getElementById('char-resistance-air')

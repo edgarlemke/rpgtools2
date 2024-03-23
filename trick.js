@@ -54,7 +54,7 @@ class Trick {
 }
 
 
-new Trick(new Action("Jungle Sedative", "Adds Sedated status.", 13, ["Intelligence"], 1, [], ["Chimera"], false, false, 1), `
+new Trick(new Action("Jungle Sedative", "Adds Sedated status: who is sedated loses 1 point from all habilities at each turn, it lasts 3 turns, and after it ends, the points are recovered but they get the Sleeping status.", 13, ["Intelligence"], 1, [], ["Chimera"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) - TH >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -107,7 +107,7 @@ new Trick(new Action("Jungle Sedative", "Adds Sedated status.", 13, ["Intelligen
 	return result
 })
 
-new Trick(new Action("Minor Healing", "Recovers health points", 1, ["Intelligence"], 11, [], ["Witch", "Chimera"], false, false, 1), `
+new Trick(new Action("Minor Healing", "Recovers health points. Heals (50 + TRH + D20) points.", 1, ["Intelligence"], 11, [], ["Witch", "Chimera"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <div><b>HEAL:</b> 50 + TRH + D20</div>
 <ul>
@@ -183,7 +183,7 @@ new Trick(new Action("Conjurate Animal Spirit", "If successful, allows to try a 
 	return result
 })
 
-new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for all hablities, 3 rounds, upon 1 player.", 16, ["Intelligence", "Charisma"], 1, [], ["Witch"], false, false, 1), `
+new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for all hablities, lasts 3 rounds, upon 1 player.", 16, ["Intelligence", "Charisma"], 1, [], ["Witch"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -236,13 +236,14 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 		// adds given points to all habilities 
 		Object.keys(target_obj.stats_objs.current).forEach((key) => {
 			target_obj.stats_objs.current[key] += status_obj.points
+			status_obj.toll.stats[key] += status_obj.points
 		})
 	})
 
 	return result
 })
 
-new Trick(new Action("Curse", "Adds Cursed status, subtracts 3 hability points for all habilities, 3 rounds, upon 1 plyaer.", 16, ["Intelligence", "Charisma"], 1, [], ["Witch", "Circus Artist"], false, false, 1), `
+new Trick(new Action("Curse", "Adds Cursed status: subtracts 3 hability points for all habilities, lasting 3 rounds, upon 1 plyaer.", 16, ["Intelligence", "Charisma"], 1, [], ["Witch", "Circus Artist"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) - TH >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -295,13 +296,14 @@ new Trick(new Action("Curse", "Adds Cursed status, subtracts 3 hability points f
 		// take points from all habilities 
 		Object.keys(target_obj.stats_objs.current).forEach((key) => {
 			target_obj.stats_objs.current[key] -= status_obj.points
+			status_obj.toll.stats[key] -= status_obj.points
 		})
 	})
 
 	return result
 })
 
-new Trick(new Action("Alchemical Imobilization", "Adds Imobilized status.", 3, ["Intelligence", "Charisma"], 11, [], ["Alchemist"], false, false, 1), `
+new Trick(new Action("Alchemical Imobilization", "Adds Imobilized status: who gets imobilized status can't act for 1 turn.", 3, ["Intelligence", "Charisma"], 11, [], ["Alchemist"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -354,7 +356,7 @@ new Trick(new Action("Alchemical Imobilization", "Adds Imobilized status.", 3, [
 	return result
 })
 
-new Trick(new Action("Frenesi", "The player is brought to an altered state of belic trance and gains hability points temporarily.", 13, ["Strength"], 1, [], ["Fighter", "Chimera"], false, false, 1), `
+new Trick(new Action("Frenesi", "The player is brought to an altered state of belic trance and gains hability points temporarily. Adds Frenesi status: the player gets 3 more points on all habilities once the action is done, and it lasts 3 turns.", 13, ["Strength"], 1, [], ["Fighter", "Chimera"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -400,6 +402,7 @@ new Trick(new Action("Frenesi", "The player is brought to an altered state of be
 	// adds given points to all habilities 
 	Object.keys(tricker_obj.stats_objs.current).forEach((key) => {
 		tricker_obj.stats_objs.current[key] += status_obj.points
+		status_obj.toll.stats[key] += status_obj.points
 	})
 
 	return result
