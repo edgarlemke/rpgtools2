@@ -17,11 +17,13 @@ class Drug {
 		return html
 	}
 
-	constructor (item_obj) {
+	constructor (item_obj, act) {
 		this.name = item_obj.name
 		this.item_obj = item_obj
 		item_obj.meta_obj = this
 		Drug.objs[this.name] = this
+
+		this.act = act
 	}
 
 	get_html () {
@@ -47,11 +49,24 @@ class Drug {
 }
 
 
-new Drug(new Item("Weed", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
-new Drug(new Item("Stimulant", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
-new Drug(new Item("Somniferous", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
-new Drug(new Item("Hallucinogen", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
-new Drug(new Item("Healing Pill", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
-new Drug(new Item("Medicine", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
-new Drug(new Item("Antidote", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+//new Drug(new Item("Weed", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+//new Drug(new Item("Stimulant", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+//new Drug(new Item("Somniferous", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+//new Drug(new Item("Hallucinogen", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+//new Drug(new Item("Healing Pill", "A little smokey herb.", 1, 5, false, false, null, 30, 1, null, null))
+
+new Drug(new Item("Medicine", "Restores 1000 life points, up to base life points.", 1, 5, false, false, null, 30, 1, null, null), (char_obj) => {
+	char_obj.health.current = (
+		char_obj.health.current + 1000 < char_obj.health.base
+			? char_obj.health.current + 1000
+			: char_obj.health.base
+	)
+})
+
+new Drug(new Item("Antidote", "Cures Sedated status.", 1, 5, false, false, null, 30, 1, null, null), (char_obj) => {
+	char_obj.status = char_obj.status.filter((status_obj) => {
+		return ['Sedated'].includes(status_obj.name)
+	})
+})
+
 //new Drug(new Item("Milk", "A little smokey herb.", 1, 5, false, false, null, 1, 1, null, null))

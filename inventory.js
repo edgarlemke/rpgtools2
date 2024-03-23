@@ -113,6 +113,12 @@ class Inventory {
 
 		return can_hold
 	}
+
+	drop (item_index) {
+		this.equipped.splice(this.equipped.indexOf(item_index, 1))
+		Inventory.drops.push(this.items[item_index])
+		this.items.splice(item_index, 1)
+	}
 }
 
 class InventoryView {
@@ -251,9 +257,8 @@ class InventoryView {
 		const inventory_obj = char_obj.inventory_obj
 
 		const item_index = Number(button.parentElement.parentElement.getAttribute('data-item-index'))
-		inventory_obj.equipped.splice(inventory_obj.equipped.indexOf(item_index, 1))
-		Inventory.drops.push(inventory_obj.items[item_index])
-		inventory_obj.items.splice(item_index, 1)
+
+		inventory_obj.drop(item_index)
 
 		InventoryView.select_char()
 		InventoryView.show_drops()

@@ -426,12 +426,7 @@ class CombatView {
 				break
 		}
 
-		const modals_container = {
-			Hide : ``,
-			Seek : ``
-		}
-
-		
+		return [action_obj.combat_modal_content, action_obj.combat_modal_onload]
 	}
 
 	static get_attack_modal_content (action_name) {

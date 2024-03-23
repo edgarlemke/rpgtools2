@@ -21,7 +21,7 @@ class Action {
 		return html
 	}
 
-	constructor (name, description, difficulty, habilities, char_level, char_races, char_classes, for_all, requires_showing, targets_count) {
+	constructor (name, description, difficulty, habilities, char_level, char_races, char_classes, for_all, requires_showing, targets_count, combat_modal_content, combat_modal_onload, view_functions) {
 		this.name = name
 		this.description = description
 		this.difficulty = difficulty
@@ -33,6 +33,9 @@ class Action {
 		this.requires_showing
 		this.meta_obj = null
 		this.targets_count = targets_count
+		this.combat_modal_content = combat_modal_content
+		this.combat_modal_onload = combat_modal_onload
+		this.view_functions = view_functions
 
 		Action.objs[name] = this
 	}
@@ -57,7 +60,54 @@ new Action("Withdraw", "Allows a player to move out of the hot zone of combat. E
 new Action("Hide", "Allows a player to avoid being perceived by an enemy. It remains hidden until an enemy uses \"Seek\" with success or the player does some actions that *requires showing*.", 10, null, 0, [], [], true, false, 1)
 new Action("Seek", "Looks for a hidden enemy.", 10, null, 0, [], [], true, true, 1)
 new Action("Insight", "Allows a player to get some important information from the world.", 7, null, 0, [], [], true, false, 1)
-new Action("Consume drug", "Consume a drug from the inventory.", 10, null, 0, [], [], true, true, 1)
+
+new Action("Consume drug", "Consume drug.", 7, null, 0, [], [], true, false, 1, `
+<div>
+	<div>
+		<label>Drug</label>
+	</div>
+	<div>
+		<select id="consume-drug-selector"></select>
+	</div>
+</div>
+<div><button onclick="Action.objs['Consume drug'].view_functions.act()">Consume</button></div>
+`, () => {
+	const consume_drug_selector = document.getElementById('consume-drug-selector')
+
+	// get consumable drugs
+	const combat_name = CombatView.creation_name.value
+	const combat_obj = Combat.objs[combat_name]
+	const char_name = combat_obj.sorted_order[combat_obj.turn][0]
+	const char_obj = Char.objs[char_name]
+
+	char_obj.inventory_obj.items.forEach((item_name) => {
+		if (!Object.keys(Drug.objs).includes(item_name)) {
+			return
+		}
+
+		// add them to select
+		const option = document.createElement('option')
+		option.innerText = item_name
+		consume_drug_selector.appendChild(option)
+	})
+}, {
+	act : () => {
+		const consume_drug_selector = document.getElementById('consume-drug-selector')
+		const item_name = consume_drug_selector.selectedOptions[0].innerText
+
+		const combat_name = CombatView.creation_name.value
+		const combat_obj = Combat.objs[combat_name]
+		const char_name = combat_obj.sorted_order[combat_obj.turn][0]
+		const char_obj = Char.objs[char_name]
+
+		const inventory_obj = char_obj.inventory_obj
+		const item_index = inventory_obj.items.indexOf(item_name)
+		const item_obj = Item.objs[item_name]
+
+		item_obj.meta_obj.act(char_obj)
+		inventory_obj.drop(item_index)
+	}
+})
 
 // some cause damage, some don't
 
@@ -76,5 +126,4 @@ new Action("Consume drug", "Consume a drug from the inventory.", 10, null, 0, []
 //new Action("Fabricate Powder", "", 2, null, 0, [], ["Engineer"], true, false, 1)
 //new Action("Copy Action", "", 2, null, 0, [], ["Mirror"], true, false, 1)
 //new Action("Copy Habilities", "", 2, null, 0, [], ["Mirror"], true, false, 1)
-
 //new Content("actions", Action.get_html())
