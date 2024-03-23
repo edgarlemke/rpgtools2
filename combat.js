@@ -1,9 +1,11 @@
 class Combat {
 	static objs = {}
 
-	constructor (name, order_obj) {
+	constructor (name, order_obj, teams) {
 		Combat.objs[name] = this
 		this.name = name
+		this.teams = teams
+		this.turn = 0
 
 		const order_obj_copy = {...order_obj}
 
@@ -59,8 +61,6 @@ class Combat {
 		console.log('sorted_order', sorted_order)
 		
 		this.sorted_order = sorted_order
-
-		this.turn = 0
 	}
 
 	skip () {
@@ -83,6 +83,23 @@ class Combat {
 				
 			}
 		})
+	}
+
+	// it's here because chars can be part of different teams
+	get_char_team (char_name) {
+		//
+		let char_team = ""
+		this.teams.forEach((team) => {
+			if (char_team.length > 0) {
+				return 
+			}
+
+			const team_obj = Team.objs[team]
+			if (team_obj.members.includes(char_name)) {
+				char_team = team
+			}
+		})
+		return char_team
 	}
 }
 
@@ -154,6 +171,7 @@ class CombatView {
 				<thead>
 					<tr>
 						<th>Char</th>
+						<th>Team</th>
 						<th>Initiative</th>
 						<th></th>
 				</thead>
@@ -181,6 +199,7 @@ class CombatView {
 				<thead>
 					<tr>
 						<th>Char</th>
+						<th>Team</th>
 						<th>Order</th>
 						<th>Status</th>
 						<th>Actions</th>
@@ -226,11 +245,17 @@ class CombatView {
 	}
 
 	static update_team () {
+		// console.log(CombatView.teams_team_selector)
+		// console.log(CombatView.teams_selector)
+		// console.log(Team.objs, Object.keys(Team.objs))
+
 		fill_select(CombatView.teams_team_selector, Object.keys(Team.objs))
 		fill_select(CombatView.teams_selector, Object.keys(Team.objs))
 	}
 
 	static create_team () {
+		console.log('create_team')
+
 		const team_name = CombatView.team_name.value
 
 		const team_members = []
@@ -242,9 +267,10 @@ class CombatView {
 			team_members.push(member_name)
 		}
 
-		//console.log(team_members)
+		console.log(team_members)
 
-		new Team(team_name, team_members)
+		const team_obj = new Team(team_name, team_members)
+		console.log(team_obj)
 
 		CombatView.update_team()
 		CombatView.clean_team_members()
@@ -263,6 +289,7 @@ class CombatView {
 
 			const tr = document.createElement('tr')
 			tr.innerHTML = `<td>${team_member}</td>
+<td>${team}</td>
 <td><input type="number" min="0" value="0" /></td>
 <td><button onclick="CombatView.remove_team_member(this)">Remove</button></td>`
 
@@ -280,15 +307,23 @@ class CombatView {
 
 		const order_obj = {}
 
+		const teams = []
+
 		const tbody = CombatView.creation_team_members.tBodies[0]
 		for (let i = 0; i < tbody.children.length; i++) {
 			const row = tbody.children[i]
 			const team_member = row.children[0].innerText
-			const team_member_initiative = Number( row.children[1].children[0].value )
+			const team = row.children[1].innerText
+			const team_member_initiative = Number( row.children[2].children[0].value )
+
 			order_obj[team_member] = team_member_initiative
+
+			if (!teams.includes(team)) {
+				teams.push(team)
+			}
 		}
 
-		new Combat(combat_name, order_obj)
+		new Combat(combat_name, order_obj, teams)
 
 		CombatView.update_combat()
 		CombatView.clean_creation_team_members()
@@ -304,6 +339,7 @@ class CombatView {
 		CombatView.selected_combat = combat_name
 
 		const combat_obj = Combat.objs[combat_name]
+		console.log(combat_obj)
 
 		remove_children(CombatView.combat_turns.tBodies[0])
 
@@ -314,10 +350,13 @@ class CombatView {
 			const total_order = Char.objs[char_name].stats_objs.current.agility + char_initiative
 			const order_text = `${Char.objs[char_name].stats_objs.current.agility}+${char_initiative} = ${total_order}`
 
+			const team = combat_obj.get_char_team(char_name)
+
 			const tr = document.createElement('tr')
 			tr.classList.add('combat-turn-char-row')
 			tr.setAttribute('data-char-name', char_name)
 			tr.innerHTML = `<td>${char_name}</td>
+<td>${team}</td>
 <td>${order_text}</td>
 <td></td>
 <td></td>`
@@ -361,7 +400,7 @@ class CombatView {
 `)
 			})
 
-			row.children[2].innerHTML = status_html.join('<br>')
+			row.children[3].innerHTML = status_html.join('<br>')
 		}
 	}
 
@@ -377,7 +416,7 @@ class CombatView {
 			const char_obj = Char.objs[char_name]
 
 			const actions_levels = char_obj.actions_obj.actions_levels
-			const cell = row.children[3]
+			const cell = row.children[4]
 			remove_children(cell)
 
 			// skip all rows which doesn't match the turn char row

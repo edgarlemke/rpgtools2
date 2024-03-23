@@ -1,0 +1,41 @@
+#backup-local-storage {
+	margin: 0 auto;
+	border: solid 1px white;
+
+	max-width: 40%;
+
+	display: table;
+	border-collapse: collapse;
+}
+
+#backup-local-storage-head {
+	display: table-row;
+}
+
+#backup-local-storage-head .table-cell {
+	display: table-cell;
+	border: solid 1px white;
+}
+
+#backup-local-storage-head :nth-child(1) {
+	min-width: 500px;
+}
+
+#backup-local-storage-head :nth-child(2),
+#backup-local-storage-head :nth-child(3) {
+	min-width: 100px;
+}
+
+#backup-local-storage-body {
+	display: table-row-group;
+}
+
+#backup-local-storage-body .table-cell {
+	display: table-row;
+}
+
+.grid-item {
+	display: table-cell;
+	border: solid 1px white;
+	padding: 5px;
+}

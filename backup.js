@@ -56,7 +56,7 @@ class Backup {
 		// restore Combat
 		Object.keys(container_obj.Combat).forEach((combat_name) => {
 			const combat_obj = container_obj.Combat[combat_name]
-			const new_combat = new Combat(combat_name, combat_obj.order_obj)
+			const new_combat = new Combat(combat_name, combat_obj.order_obj, combat_obj.teams)
 
 			Object.keys(combat_obj).forEach((key) => {
 				new_combat[key] = combat_obj[key]
