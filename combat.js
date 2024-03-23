@@ -295,6 +295,11 @@ class CombatView {
 	}
 
 	static select_combat () {
+		// added to avoid failure when loading backups with no combats
+		if (!CombatView.combat_selector.selectedOptions[0]) {
+			return 
+		}
+
 		const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 		CombatView.selected_combat = combat_name
 
