@@ -81,24 +81,36 @@ class Attack {
 
 		// test and apply damage to each target
 		targets_objs.forEach((target_obj) => {
+			// console.log('target_obj', target_obj)
+
 			const target_hability = target_obj.stats_objs.current[hability]
 
 			const target_resistance = target_obj.resistances[damage_type]
 
 			let target_defenses = 0
+			//console.log('target_obj.inventory_obj.equipped', target_obj.inventory_obj.equipped)
 			target_obj.inventory_obj.equipped.forEach((item_index) => {
-				//console.log('item_index', item_index)
+				// console.log('item_index', item_index)
 
 				const item_name = target_obj.inventory_obj.items[item_index]
-				//console.log('item_name', item_name)
+				// console.log('item_name', item_name)
 
 				const item_obj = Item.objs[item_name]
-				//console.log('item_obj', item_obj)
+				// console.log('item_obj', item_obj)
 
-				if (Object.keys(Defense.objs).includes(item_name) && item_obj.meta_obj.damage_types.includes(damage_type)) {
+				const is_defense = Object.keys(Defense.objs).includes(item_name)
+				const matches_damage_type = item_obj.meta_obj.damage_types.filter((damage_type_) => {return damage_type_.toLowerCase() == damage_type}).length > 0
+
+				// console.log('is_defense', is_defense)
+				// console.log('item_obj.meta_obj.damage_types', item_obj.meta_obj.damage_types)
+				// console.log('damage_type', damage_type)
+
+				if (is_defense && matches_damage_type) {
+					// console.log('item_obj.meta_obj.defense_points', item_obj.meta_obj.defense_points)
 					target_defenses += item_obj.meta_obj.defense_points
 				}
 			})
+			// console.log('target_defenses', target_defenses)
 
 			const test_result_value = ((attacker_hability + attacker_aptitude + attacker_weapons + attacker_d20) - (target_hability + target_resistance + target_defenses))
 			const test_result = test_result_value >= difficulty
@@ -165,7 +177,7 @@ new Attack(new Action("Kick", "Kicks someone.", 9, ["Strength", "Agility", "Dext
 new Attack(new Action("Kneestrike", "Strikes someone with the knees.", 12, ["Strength", "Agility", "Dextrity"], 1, [], [], true, true, 1), ['Impact'], 0)
 new Attack(new Action("Weak spot strike", "Strikes someone in a weak spot.", 15, ["Strength", "Agility", "Dextrity"], 1, [], [], true, true, 1), ['Impact'], 0)
 
-new Attack(new Action("Armed attack", "Attacks someone using a weapon. It's a generic action for when a player wants to (more probably) hit an attack using a weapon, even if causing low damage.", 5, ["Strength", "Agility", "Dextrity", "Intelligence", "Charisma"], 1, [], [], true, true, 1), ['Impact'], 0)
+new Attack(new Action("Armed attack", "Attacks someone using a weapon. It's a generic action for when a player wants to (more probably) hit an attack using a weapon, even if causing low damage.", 5, ["Strength", "Agility", "Dextrity", "Intelligence", "Charisma"], 1, [], [], true, true, 1), ['Impact', 'Cutting', 'Perfuration', 'Shooting', 'Throwing', 'Explosion', 'Air', 'Water', 'Fire', 'Earth', 'Cheese', 'Psychic', 'Invocation', 'Poison', 'Acid', 'Electricity'], 0)
 
 new Attack(new Action("Onslaught", "The attacker runs furiously and simply removes an enemy from her way with a strike of her weapon.", 11, ["Strength"], 1, [], ["Fighter"], false, true, 1), ['Impact', 'Cutting'], 0)
 new Attack(new Action("Bloody Jump", "The attacker jumps over an enemy and with a dimensional advantage strikes the enemy using the weight of her weapon.", 16, ["Strength", "Dextrity"], 1, [], ["Fighter", "Swordsman"], false, true, 1), ['Impact', 'Perfuration', 'Cutting'], 0)

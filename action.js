@@ -67,33 +67,16 @@ new Action("Consume drug", "Consume drug.", 7, null, 0, [], [], true, false, 1, 
 		<label>Drug</label>
 	</div>
 	<div>
-		<select id="consume-drug-selector"></select>
+		<select id="consume-drug-select"></select>
 	</div>
 </div>
 <div><button onclick="Action.objs['Consume drug'].view_functions.act()">Consume</button></div>
 `, () => {
-	const consume_drug_selector = document.getElementById('consume-drug-selector')
-
-	// get consumable drugs
-	const combat_name = CombatView.creation_name.value
-	const combat_obj = Combat.objs[combat_name]
-	const char_name = combat_obj.sorted_order[combat_obj.turn][0]
-	const char_obj = Char.objs[char_name]
-
-	char_obj.inventory_obj.items.forEach((item_name) => {
-		if (!Object.keys(Drug.objs).includes(item_name)) {
-			return
-		}
-
-		// add them to select
-		const option = document.createElement('option')
-		option.innerText = item_name
-		consume_drug_selector.appendChild(option)
-	})
+	Action.objs['Consume drug'].view_functions.update_select()
 }, {
-	act : () => {
-		const consume_drug_selector = document.getElementById('consume-drug-selector')
-		const item_name = consume_drug_selector.selectedOptions[0].innerText
+	act () {
+		const consume_drug_select = document.getElementById('consume-drug-select')
+		const item_name = consume_drug_select.selectedOptions[0].innerText
 
 		const combat_name = CombatView.creation_name.value
 		const combat_obj = Combat.objs[combat_name]
@@ -106,6 +89,33 @@ new Action("Consume drug", "Consume drug.", 7, null, 0, [], [], true, false, 1, 
 
 		item_obj.meta_obj.act(char_obj)
 		inventory_obj.drop(item_index)
+
+		Action.objs['Consume drug'].view_functions.update_select()
+		CombatView.update_status()
+
+		new Modal('Drug consumed!', `${item_name} was consumed!`)
+	},
+	update_select () {
+		const consume_drug_select = document.getElementById('consume-drug-select')
+
+		remove_children(consume_drug_select)
+
+		// get consumable drugs
+		const combat_name = CombatView.creation_name.value
+		const combat_obj = Combat.objs[combat_name]
+		const char_name = combat_obj.sorted_order[combat_obj.turn][0]
+		const char_obj = Char.objs[char_name]
+	
+		char_obj.inventory_obj.items.forEach((item_name) => {
+			if (!Object.keys(Drug.objs).includes(item_name)) {
+				return
+			}
+	
+			// add them to select
+			const option = document.createElement('option')
+			option.innerText = item_name
+			consume_drug_select.appendChild(option)
+		})
 	}
 })
 

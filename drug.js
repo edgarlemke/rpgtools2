@@ -63,9 +63,22 @@ new Drug(new Item("Medicine", "Restores 1000 life points, up to base life points
 	)
 })
 
-new Drug(new Item("Antidote", "Cures Sedated status.", 1, 5, false, false, null, 30, 1, null, null), (char_obj) => {
-	char_obj.status = char_obj.status.filter((status_obj) => {
-		return ['Sedated'].includes(status_obj.name)
+new Drug(new Item("Antidote", "Cures any and all Sedated status.", 1, 5, false, false, null, 30, 1, null, null), (char_obj) => {
+	char_obj.status.forEach((status_obj) => {
+		if (!['Sedated'].includes(status_obj.name)) {
+			return
+		}
+
+		if (status_obj.end) {
+			status_obj.end()
+		}
+	})
+	char_obj.status.forEach((status_obj) => {
+		if (!['Sleeping'].includes(status_obj.name)) {
+			return
+		}
+
+		delete char_obj.status[ char_obj.status.indexOf(status_obj) ]
 	})
 })
 

@@ -68,7 +68,7 @@ class Char {
 	]
 
 	static toll_obj = {
-		stats: {Strength: 0, Agility: 0, Dextrity: 0, Intelligence: 0, Charisma: 0},
+		stats: {strength: 0, agility: 0, dextrity: 0, intelligence: 0, charisma: 0},
 		health: 0
 	}
 
@@ -322,6 +322,9 @@ class Char {
 			}
 
 			Object.keys(status_obj.toll.stats).forEach((hability) => {
+				console.log('hability', hability)
+				console.log('toll', status_obj.toll)
+				console.log('stats', status_obj.toll.stats)
 				status_stats[hability] += status_obj.toll.stats[hability]
 			})
 		})
@@ -1050,6 +1053,9 @@ class CharView {
 		else if (CharView.mode == 'edit') {
 			const char_name = CharView.selector.selectedOptions[0].innerText
 			if (Char.objs[char_name]) {
+				console.log('Char.objs[char_name]', Char.objs[char_name])
+				console.log('Char.objs[char_name]', Char.objs[char_name].get_status_stats)
+
 				return Char.objs[char_name].get_status_stats()		
 			}
 			else {
@@ -1093,7 +1099,7 @@ class CharView {
 
 	static fill_status_stats () {
 		const status_stats = CharView._get_status_stats_obj()
-		// console.log('status_stats', status_stats)
+		//console.log('status_stats', status_stats)
 
 		CharView.stat_status_strength.innerHTML = status_stats.strength
 		CharView.stat_status_agility.innerHTML = status_stats.agility

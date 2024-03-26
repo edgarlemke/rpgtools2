@@ -204,7 +204,6 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
 		const target_hability = target_obj.stats_objs.current[hability]
-		const target_d20 = targets_d20s[targets_names.indexOf(target_name)]
 
 		const test_result_value = (tricker_hability + tricker_d20) 
 		const test_result = test_result_value >= difficulty
@@ -235,9 +234,17 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 
 		// adds given points to all habilities 
 		Object.keys(target_obj.stats_objs.current).forEach((key) => {
+			console.log('Bless key', key)
+			console.log('Bless status_obj.points', status_obj.points)
+
 			target_obj.stats_objs.current[key] += status_obj.points
+
+			console.log('before', status_obj.toll.stats[key])
 			status_obj.toll.stats[key] += status_obj.points
+			console.log('after', status_obj.toll.stats[key])
 		})
+
+		console.log('Bless toll stats', status_obj.toll.stats)
 	})
 
 	return result
@@ -291,13 +298,20 @@ new Trick(new Action("Curse", "Adds Cursed status: subtracts 3 hability points f
 		const old_end = status_obj.end
 		status_obj.end = () => {old_end(target_obj, status_obj)}
 
+		console.log('Curse status_obj', status_obj)
 		target_obj.status.push(status_obj)
 
 		// take points from all habilities 
 		Object.keys(target_obj.stats_objs.current).forEach((key) => {
+			console.log('Curse key', key)
+			console.log('Curse status_obj.points', status_obj.points)
 			target_obj.stats_objs.current[key] -= status_obj.points
+
+			console.log('before', status_obj.toll.stats[key])
 			status_obj.toll.stats[key] -= status_obj.points
+			console.log('after', status_obj.toll.stats[key])
 		})
+		console.log('Curse toll stats', status_obj.toll.stats)
 	})
 
 	return result
@@ -375,14 +389,17 @@ new Trick(new Action("Frenesi", "The player is brought to an altered state of be
 	const result = {}
 
 	const test_result_value = tricker_hability + tricker_d20
+	console.log('test_result_value', test_result_value)
+
 	const test_result = test_result_value > difficulty
+	console.log('test_result', test_result)
 
 	result[tricker_name] = `
 <div><b>TEST:</b> (${tricker_hability} + ${tricker_d20}) >= ${difficulty} -> <b>${test_result ? 'Passed' : 'Failed'}</b></div>
 `
 
     if (!test_result) {
-		return
+		return result
 	}
 
 	// setup status
@@ -673,7 +690,6 @@ new Trick(new Action("Cover Fire", "Gives cover fire to protect an ally for a tu
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
 		const target_hability = target_obj.stats_objs.current[hability]
-		const target_d20 = targets_d20s[targets_names.indexOf(target_name)]
 
 		const test_result_value = (tricker_hability + tricker_d20) 
 		const test_result = test_result_value >= difficulty
@@ -732,7 +748,6 @@ new Trick(new Action("Accurate Shot", "Guarantees that if the shooter misses an 
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
 		const target_hability = target_obj.stats_objs.current[hability]
-		const target_d20 = targets_d20s[targets_names.indexOf(target_name)]
 
 		const test_result_value = (tricker_hability + tricker_d20) 
 		const test_result = test_result_value >= difficulty

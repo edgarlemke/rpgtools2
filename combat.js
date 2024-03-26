@@ -254,7 +254,7 @@ class CombatView {
 	}
 
 	static create_team () {
-		console.log('create_team')
+		// console.log('create_team')
 
 		const team_name = CombatView.team_name.value
 
@@ -267,10 +267,10 @@ class CombatView {
 			team_members.push(member_name)
 		}
 
-		console.log(team_members)
+		// console.log(team_members)
 
 		const team_obj = new Team(team_name, team_members)
-		console.log(team_obj)
+		// console.log(team_obj)
 
 		CombatView.update_team()
 		CombatView.clean_team_members()
@@ -382,7 +382,7 @@ class CombatView {
 				const keys_html = []
 
 				Object.keys(status_obj).forEach((key) => {
-					if (key == 'name' || typeof status_obj[key] === 'function') {
+					if (['name', 'toll'].includes(key) || typeof status_obj[key] === 'function') {
 						return
 					}
 
@@ -722,6 +722,7 @@ class CombatView {
 		const tricker_d20 = Number(trick_d20.value)
 
 		const result = action_obj.meta_obj.act(tricker_name, hability, targets_names, tricker_d20)
+		console.log(result)
 
 		const legend_html = action_obj.meta_obj.legend_html
 

@@ -67,7 +67,6 @@ class Backup {
 	}
 
 	static get_localstorage_keys () {
-
 		const keys = []
 	
 		for (var i = 0; i < localStorage.length; i++) {
