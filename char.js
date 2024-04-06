@@ -83,8 +83,10 @@ class Char {
 		Safeguarded : {},
 
 		Imobilized : {turns: 1, duration: 1,
-			turn: (target_obj, status_obj) => {
-				status_obj.duration -= 1
+			turn: (target_obj, status_obj, skip_duration) => {
+				if (!skip_duration) {
+					status_obj.duration -= 1
+				}
 			},
 			end: (target_obj, status_obj) => {
 				// clean Imobilized status object
@@ -95,8 +97,10 @@ class Char {
 			toll: {...Char.toll_obj}
 		},
         'Unstoppable Blade' : {turns: 1, duration: 1,
-			turn: (target_obj, status_obj) => {
-				status_obj.duration -= 1
+			turn: (target_obj, status_obj, skip_duration) => {
+				if (!skip_duration) {
+					status_obj.duration -= 1
+				}
 			},
 			end: (target_obj, status_obj) => {
 				// clean Unstoppable Blade status object
@@ -107,8 +111,10 @@ class Char {
 			toll: {...Char.toll_obj}
 		},
 		Covered : {turns: 1, duration: 1,
-			turn: (target_obj, status_obj) => {
-				status_obj.duration -= 1
+			turn: (target_obj, status_obj, skip_duration) => {
+				if (!skip_duration) {
+					status_obj.duration -= 1
+				}
 			},
 			end: (target_obj, status_obj) => {
 				// clean Covered status object
@@ -119,8 +125,10 @@ class Char {
 			toll: {...Char.toll_obj}
 		},
 		'Accurate Shot' : {turns: 1, duration: 1,
-			turn: (target_obj, status_obj) => {
-				status_obj.duration -= 1
+			turn: (target_obj, status_obj, skip_duration) => {
+				if (!skip_duration) {
+					status_obj.duration -= 1
+				}
 			},
 			end: (target_obj, status_obj) => {
 				// clean Covered status object
@@ -133,8 +141,10 @@ class Char {
 
 		Pacified : {char_name: null},
 		Hypnotized : {char_name: null, turns: 2, duration: 2,
-			turn: (target_obj, status_obj) => {
-				status_obj.duration -= 1
+			turn: (target_obj, status_obj, skip_duration) => {
+				if (!skip_duration) {
+					status_obj.duration -= 1
+				}
 			},
 			end: (target_obj, status_obj) => {
 				// clean Hypnotized status object
@@ -145,8 +155,10 @@ class Char {
 			toll: {...Char.toll_obj}
 		},
 		Possessed : {turns: 2, duration: 2,
-			turn: (target_obj, status_obj) => {
-				status_obj.duration -= 1
+			turn: (target_obj, status_obj, skip_duration) => {
+				if (!skip_duration) {
+					status_obj.duration -= 1
+				}
 			},
 			end: (target_obj, status_obj) => {
 				//console.log('end', target_obj, status_obj)
@@ -162,8 +174,10 @@ class Char {
 		},
 
 		Frenesi  : {turns: 3, duration: 3, points: 3,
-			turn: (target_obj, status_obj) => {
-				status_obj.duration -= 1
+			turn: (target_obj, status_obj, skip_duration) => {
+				if (!skip_duration) {
+					status_obj.duration -= 1
+				}
 			},
 			end: (target_obj, status_obj) => {
 				// clean Frenesi status object
@@ -179,8 +193,10 @@ class Char {
 			toll: {...Char.toll_obj}
 		},
 		Blessed  : {turns: 3, duration: 3, points: 3,
-			turn: (target_obj, status_obj) => {
-				status_obj.duration -= 1
+			turn: (target_obj, status_obj, skip_duration) => {
+				if (!skip_duration) {
+					status_obj.duration -= 1
+				}
 			},
 			end: (target_obj, status_obj) => {
 				// clean Blessed status object
@@ -196,8 +212,10 @@ class Char {
 			toll: {...Char.toll_obj}
 		},
 		Cursed   : {turns: 3, duration: 3, points: 3,
-			turn: (target_obj, status_obj) => {
-				status_obj.duration -= 1
+			turn: (target_obj, status_obj, skip_duration) => {
+				if (!skip_duration) {
+					status_obj.duration -= 1
+				}
 			},
 			end: (target_obj, status_obj) => {
 				// clean Cursed status object
@@ -214,12 +232,14 @@ class Char {
 		},
 		//Poisoned : {turns: 0, duration: 0, points: 100},
 		Sedated  : {turns: 3, duration: 3, points: 1,
-			turn: (target_obj, status_obj) => {
+			turn: (target_obj, status_obj, skip_duration) => {
 				Object.keys(target_obj.stats_objs.current).forEach((key) => {
 					target_obj.stats_objs.current[key] -= status_obj.points
 					status_obj.toll.stats[key] -= status_obj.points
 				})
-				status_obj.duration -= 1
+				if (!skip_duration) {
+					status_obj.duration -= 1
+				}
 			},
 			end: (target_obj, status_obj) => {
 				// clean Sedated status object
@@ -239,7 +259,7 @@ class Char {
 		},
 	}
 
-	static base_health_points = 3000
+	static base_health_points = 2000
 	static health_points_per_level = 1000
 
 	constructor (name, age, level, race, class_, primary_motivation, secondary_motivations, virtues, defects, player_stats_obj, story, aptitudes, resistances, actions_obj) {

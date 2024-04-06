@@ -46,7 +46,7 @@ class Combat {
 
 			Object.keys(ties).forEach((tie_value) => {
 				const tie_array = ties[tie_value]
-				ties_msg += `${tie_array.length} tied chars at combat order ${tie_value}: ${tie_array.join(', ')}`
+				ties_msg += `${tie_array.length} tied chars at combat order ${tie_value}: ${tie_array.join(', ')}<br>`
 			})
 
 			new Modal('Tie at combat order', ties_msg)
@@ -61,20 +61,30 @@ class Combat {
 		console.log('sorted_order', sorted_order)
 		
 		this.sorted_order = sorted_order
+
+		this.status_turns = []
+		sorted_order.forEach(() => {
+			this.status_turns.push([])
+		})
 	}
 
 	skip () {
 		// apply effects of status
+		this.turn = (this.turn + 1) % this.sorted_order.length
+
 		const char_name = this.sorted_order[this.turn][0]
 		const char_obj = Char.objs[char_name]
 
-		this.turn = (this.turn + 1) % this.sorted_order.length
 
-		char_obj.status.forEach((status_obj) => {
+		const status_turn = this.status_turns[this.turn]
+		console.log('skip status_turn', status_turn)
+
+		//char_obj.status.forEach((status_obj) => {
+		status_turn.forEach((status_obj) => {
 			if (Object.keys(status_obj).includes('duration')) {
 
 				if (status_obj.duration > 0) {
-					status_obj.turn()
+					status_obj.turn(false)
 				}
 
 				if (status_obj.duration == 0) {
@@ -83,6 +93,8 @@ class Combat {
 				
 			}
 		})
+
+
 	}
 
 	// it's here because chars can be part of different teams
