@@ -648,7 +648,7 @@ class CombatView {
 
     <div><b>TEST:</b> ((AH + AA + AW + D20) - (TH + TR + TD)) >= DIF</div>
 	<div><b>ATTACK DAMAGE (AD):</b> BD + ((AH + AA + D20 + WD) * (1 + ((AL - 1) * 0.2)))</div>
-	<div><b>DAMAGE:</b> ((AD - (TR + TD)) / TC) * DIF * MUL</div>
+	<div><b>DAMAGE:</b> ((AD - (TR + TDP)) / TC) * DIF * MUL</div>
 	<div><small>When damage isn't integer, it's rounded down.</small></div>
 
 	<ul>
@@ -662,6 +662,7 @@ class CombatView {
 		<li>TH - Target Hability</li>
 		<li>TR - Target Resistance against Damage Type</li>
         <li>TD - Target Defenses Defense Points</li>
+		<li>TDP - Target Defenses Protection Points</li>
 		<li>TC - Target Count</li>
 		<li>DIF - Action Difficulty</li>
 		<li>MUL - Multiplier - 2 if D20 == 20, else 1</li>
@@ -680,9 +681,8 @@ class CombatView {
 <div class="combat-attack-target-result">
 	<div><b>${target_name}</b></div>
     <div><b>TEST:</b> ((${r.AH} + ${r.AA} + ${r.AW} + ${r.D20}) - (${r.TH} + ${r.TR} + ${r.TD})) = ${r.test_result_value} >= ${r.DIF} -> <b>${r.test_result ? 'Passed' : 'Failed'}</b></div>
-<!--	${r.test_result ? `<div><b>DAMAGE:</b> (((${r.AH} + ${r.AA} + ${r.D20} + ${r.DIF} + ${r.WD}) - (${r.TR} + ${r.TD})) / ${r.TC}) * ${r.D20 == 20 ? 3 : 1} = <b>${r.damage}</b></div>` : ''} -->
     ${r.test_result ? `<div><b>ATTACK DAMAGE (AD):</b> ${r.BD} + ((${r.AH} + ${r.AA} + ${r.D20} + ${r.WD}) * (1 + ((${r.AL} - 1) * 0.2))) = ${r.AD}` : ''}
-    ${r.test_result ? `<div><b>DAMAGE:</b> ((${r.AD} - (${r.TR} + ${r.TD})) / ${r.TC}) * ${r.DIF} * ${r.D20 == 20 ? 2 : 1} = <b>${r.damage}</b></div>` : ''}
+    ${r.test_result ? `<div><b>DAMAGE:</b> ((${r.AD} - (${r.TR} + ${r.TDP})) / ${r.TC}) * ${r.DIF} * ${r.D20 == 20 ? 2 : 1} = <b>${r.damage}</b></div>` : ''}
 	${r.test_result ? `<div><button onclick="CombatView.add_sub_aptitude_resistance('${target_name}', 'resistances', '${damage_type}', 'add', this)">Add Resistance point</button></div>` : ''}
 </div>`
 

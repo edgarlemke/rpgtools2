@@ -87,7 +87,8 @@ class Attack {
 
 			const target_resistance = target_obj.resistances[damage_type]
 
-			let target_defenses = 0
+			let target_defenses_defense_points = 0
+			let target_defenses_protection_points = 0
 			//console.log('target_obj.inventory_obj.equipped', target_obj.inventory_obj.equipped)
 			target_obj.inventory_obj.equipped.forEach((item_index) => {
 				// console.log('item_index', item_index)
@@ -107,12 +108,13 @@ class Attack {
 
 				if (is_defense && matches_damage_type) {
 					// console.log('item_obj.meta_obj.defense_points', item_obj.meta_obj.defense_points)
-					target_defenses += item_obj.meta_obj.defense_points
+					target_defenses_defense_points += item_obj.meta_obj.defense_points
+					target_defenses_protection_points += item_obj.price
 				}
 			})
 			// console.log('target_defenses', target_defenses)
 
-			const test_result_value = ((attacker_hability + attacker_aptitude + attacker_weapons + attacker_d20) - (target_hability + target_resistance + target_defenses))
+			const test_result_value = ((attacker_hability + attacker_aptitude + attacker_weapons + attacker_d20) - (target_hability + target_resistance + target_defenses_defense_points))
 			const test_result = test_result_value >= difficulty
 
 			// sets the proper result object with an object already containing the abbreviations
@@ -126,7 +128,8 @@ class Attack {
 				AL: action_level,
 				TH: target_hability,
 				TR: target_resistance,
-				TD: target_defenses,
+				TD: target_defenses_defense_points,
+				TDP: target_defenses_protection_points,
 				TC: targets_count,
 				DIF: difficulty,
 				test_result_value: test_result_value,
@@ -142,7 +145,7 @@ class Attack {
 
 				// const damage = Math.floor( (((attacker_hability + attacker_aptitude + attacker_d20 + difficulty + weapons_damage) - (target_resistance + target_defenses)) / targets_count) * mul)
 				const attack_damage = Math.floor( this.base_damage + ((attacker_hability + attacker_aptitude + attacker_d20 + weapons_damage) * (1+((action_level-1)*0.2))) )
-				const damage = Math.floor( (( attack_damage  - (target_resistance + target_defenses)) / targets_count) * difficulty * mul)
+				const damage = Math.floor( (( attack_damage  - (target_resistance + target_defenses_protection_points)) / targets_count) * difficulty * mul)
 				result[target_obj.name].AD = attack_damage
 				result[target_obj.name].damage = damage
 
