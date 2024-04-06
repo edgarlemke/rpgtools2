@@ -88,9 +88,12 @@ class Char {
 					status_obj.duration -= 1
 				}
 			},
-			end: (target_obj, status_obj) => {
+			end: (target_obj, status_obj, tricker_obj) => {
 				// clean Imobilized status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+				tricker_obj.status_turns = tricker_obj.status_turns.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
 			},
@@ -102,9 +105,12 @@ class Char {
 					status_obj.duration -= 1
 				}
 			},
-			end: (target_obj, status_obj) => {
+			end: (target_obj, status_obj, tricker_obj) => {
 				// clean Unstoppable Blade status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+				tricker_obj.status_turns = tricker_obj.status_turns.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
 			},
@@ -116,9 +122,12 @@ class Char {
 					status_obj.duration -= 1
 				}
 			},
-			end: (target_obj, status_obj) => {
+			end: (target_obj, status_obj, tricker_obj) => {
 				// clean Covered status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+				tricker_obj.status_turns = tricker_obj.status_turns.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
 			},
@@ -130,9 +139,12 @@ class Char {
 					status_obj.duration -= 1
 				}
 			},
-			end: (target_obj, status_obj) => {
+			end: (target_obj, status_obj, tricker_obj) => {
 				// clean Covered status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+				tricker_obj.status_turns = tricker_obj.status_turns.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
 			},
@@ -146,9 +158,12 @@ class Char {
 					status_obj.duration -= 1
 				}
 			},
-			end: (target_obj, status_obj) => {
+			end: (target_obj, status_obj, tricker_obj) => {
 				// clean Hypnotized status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+				tricker_obj.status_turns = tricker_obj.status_turns.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
 			},
@@ -160,13 +175,16 @@ class Char {
 					status_obj.duration -= 1
 				}
 			},
-			end: (target_obj, status_obj) => {
+			end: (target_obj, status_obj, tricker_obj) => {
 				//console.log('end', target_obj, status_obj)
 				// clean Possessed status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
 					//console.log('status_obj', status_obj)
 					//console.log('status_obj_', status_obj_)
 
+					return status_obj !== status_obj_
+				})
+				tricker_obj.status_turns = tricker_obj.status_turns.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
 			},
@@ -179,9 +197,12 @@ class Char {
 					status_obj.duration -= 1
 				}
 			},
-			end: (target_obj, status_obj) => {
+			end: (target_obj, status_obj, tricker_obj) => {
 				// clean Frenesi status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+				tricker_obj.status_turns = tricker_obj.status_turns.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
 
@@ -198,9 +219,12 @@ class Char {
 					status_obj.duration -= 1
 				}
 			},
-			end: (target_obj, status_obj) => {
+			end: (target_obj, status_obj, tricker_obj) => {
 				// clean Blessed status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+				tricker_obj.status_turns = tricker_obj.status_turns.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
 
@@ -217,9 +241,12 @@ class Char {
 					status_obj.duration -= 1
 				}
 			},
-			end: (target_obj, status_obj) => {
+			end: (target_obj, status_obj, tricker_obj) => {
 				// clean Cursed status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+				tricker_obj.status_turns = tricker_obj.status_turns.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
 
@@ -241,9 +268,12 @@ class Char {
 					status_obj.duration -= 1
 				}
 			},
-			end: (target_obj, status_obj) => {
+			end: (target_obj, status_obj, tricker_obj) => {
 				// clean Sedated status object
 				target_obj.status = target_obj.status.filter((status_obj_) => {
+					return status_obj !== status_obj_
+				})
+				tricker_obj.status_turns = tricker_obj.status_turns.filter((status_obj_) => {
 					return status_obj !== status_obj_
 				})
 
@@ -293,6 +323,7 @@ class Char {
 		this.inventory_obj = new Inventory(this)
 
 		this.status = [{name: 'Alive'}]
+		this.status_turns = []
 	}
 
 	get_base_stats_obj () {

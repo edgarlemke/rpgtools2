@@ -61,25 +61,18 @@ class Combat {
 		console.log('sorted_order', sorted_order)
 		
 		this.sorted_order = sorted_order
-
-		this.status_turns = []
-		sorted_order.forEach(() => {
-			this.status_turns.push([])
-		})
 	}
 
+
 	skip () {
-		// apply effects of status
 		this.turn = (this.turn + 1) % this.sorted_order.length
 
+		// apply effects of status
 		const char_name = this.sorted_order[this.turn][0]
 		const char_obj = Char.objs[char_name]
+		const status_turn = char_obj.status_turns
+		// console.log('skip status_turn', status_turn)
 
-
-		const status_turn = this.status_turns[this.turn]
-		console.log('skip status_turn', status_turn)
-
-		//char_obj.status.forEach((status_obj) => {
 		status_turn.forEach((status_obj) => {
 			if (Object.keys(status_obj).includes('duration')) {
 
@@ -93,8 +86,6 @@ class Combat {
 				
 			}
 		})
-
-
 	}
 
 	// it's here because chars can be part of different teams

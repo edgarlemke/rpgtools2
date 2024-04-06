@@ -200,8 +200,8 @@ new Attack(new Action("Infernal hand", "", 11, ["Intelligence"], 5, [], ["Messia
 new Attack(new Action("Purgatory", "", 13, ["Charisma"], 10, [], ["Messiah"], false, true, 1), ['Psychic'], 0)
 new Attack(new Action("Infinite Love of the Divinity", "", 16, ["Intelligence"], 1, [], ["Messiah"], false, true, 1), ['Invocation'], 0)
 
-new Attack(new Action("Fast shot", "", 11, ["Agility"], 5, [], ["Shooter"], false, true, 1), ['Shooting'], 0)
-new Attack(new Action("Pew Pew", "", 13, ["Dextrity"], 10, [], ["Shooter"], false, true, 1), ['Shooting'], 0)
+new Attack(new Action("Fast shot", "", 11, ["Agility"], 1, [], ["Shooter"], false, true, 1), ['Shooting'], 0)
+new Attack(new Action("Pew Pew", "", 13, ["Dextrity"], 1, [], ["Shooter"], false, true, 1), ['Shooting'], 0)
 
 new Attack(new Action("Kwink Blade", "", 11, ["Agility", "Dextrity"], 1, [], ["Engineer"], false, true, 1), ['Cutting', 'Perfuration'], 0)
 new Attack(new Action("Kwink Hammer", "", 13, ["Dextrity", "Strength"], 1, [], ["Engineer"], false, true, 1), ['Impact'], 0)

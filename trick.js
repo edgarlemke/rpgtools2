@@ -74,7 +74,7 @@ new Trick(new Action("Jungle Sedative", "Adds Sedated status: who is sedated los
 	const result = {}	
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
@@ -103,7 +103,7 @@ new Trick(new Action("Jungle Sedative", "Adds Sedated status: who is sedated los
 		status_obj.turn(true)
 
 		const old_end = status_obj.end
-		status_obj.end = () => {old_end(target_obj, status_obj)}
+		status_obj.end = () => {old_end(target_obj, status_obj, tricker_obj)}
 
 		target_obj.status.push(status_obj)
 		status_turn.push(status_obj)
@@ -207,7 +207,7 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
@@ -237,7 +237,7 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 		status_obj.turn(true)
 
 		const old_end = status_obj.end
-		status_obj.end = () => {old_end(target_obj, status_obj)}
+		status_obj.end = () => {old_end(target_obj, status_obj, tricker_obj)}
 
 		target_obj.status.push(status_obj)
 		status_turn.push(status_obj)
@@ -260,7 +260,7 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 	return result
 })
 
-new Trick(new Action("Curse", "Adds Cursed status: subtracts 3 hability points for all habilities, lasting 3 rounds, upon 1 plyaer.", 16, ["Intelligence", "Charisma"], 1, [], ["Witch", "Circus Artist"], false, false, 1), `
+new Trick(new Action("Curse", "Adds Cursed status: subtracts 3 hability points for all habilities, lasting 3 rounds, upon 1 player.", 16, ["Intelligence", "Charisma"], 1, [], ["Witch", "Circus Artist"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) - TH >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>
@@ -280,7 +280,7 @@ new Trick(new Action("Curse", "Adds Cursed status: subtracts 3 hability points f
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
@@ -310,7 +310,7 @@ new Trick(new Action("Curse", "Adds Cursed status: subtracts 3 hability points f
 		status_obj.turn(true)
 
 		const old_end = status_obj.end
-		status_obj.end = () => {old_end(target_obj, status_obj)}
+		status_obj.end = () => {old_end(target_obj, status_obj, tricker_obj)}
 
 		console.log('Curse status_obj', status_obj)
 		target_obj.status.push(status_obj)
@@ -351,7 +351,7 @@ new Trick(new Action("Alchemical Imobilization", "Adds Imobilized status: who ge
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
@@ -381,7 +381,7 @@ new Trick(new Action("Alchemical Imobilization", "Adds Imobilized status: who ge
 		status_obj.turn(true)
 
 		const old_end = status_obj.end
-		status_obj.end = () => {old_end(target_obj, status_obj)}
+		status_obj.end = () => {old_end(target_obj, status_obj, tricker_obj)}
 
 		target_obj.status.push(status_obj)
 		status_turn.push(status_obj)
@@ -409,7 +409,7 @@ new Trick(new Action("Frenesi", "The player is brought to an altered state of be
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	const test_result_value = tricker_hability + tricker_d20
 	//console.log('test_result_value', test_result_value)
@@ -470,7 +470,7 @@ new Trick(new Action("Mirrors and Smoke", "Allows the Circus Artist to Hide more
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	const test_result_value = tricker_hability + tricker_d20
 	const test_result = test_result_value > difficulty
@@ -515,7 +515,7 @@ new Trick(new Action("Lullaby", "Sings or plays a lullaby, that calms down an en
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
@@ -569,7 +569,7 @@ new Trick(new Action("Hypnosis", "Makes someone else obey a single command.", 16
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
@@ -630,7 +630,7 @@ new Trick(new Action("Possession", "Adds Possessed status to the target, which i
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
@@ -661,7 +661,7 @@ new Trick(new Action("Possession", "Adds Possessed status to the target, which i
 		status_obj.turn(true)
 
 		const old_end = status_obj.end
-		status_obj.end = () => {old_end(target_obj, status_obj)}
+		status_obj.end = () => {old_end(target_obj, status_obj, tricker_obj)}
 
 		target_obj.status.push(status_obj)
 		status_turn.push(status_obj)
@@ -689,7 +689,7 @@ new Trick(new Action("Unstoppable Blade", "Allows the Swordsman to break the wea
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	const test_result_value = tricker_hability + tricker_d20
 	const test_result = test_result_value > difficulty
@@ -736,7 +736,7 @@ new Trick(new Action("Cover Fire", "Gives cover fire to protect an ally for a tu
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
@@ -766,7 +766,7 @@ new Trick(new Action("Cover Fire", "Gives cover fire to protect an ally for a tu
 		status_obj.turn(true)
 
 		const old_end = status_obj.end
-		status_obj.end = () => {old_end(target_obj, status_obj)}
+		status_obj.end = () => {old_end(target_obj, status_obj, tricker_obj)}
 
 		target_obj.status.push(status_obj)
 		status_turn.push(status_obj)
@@ -799,7 +799,7 @@ new Trick(new Action("Accurate Shot", "Guarantees that if the shooter misses an 
 	const result = {}
 	const combat_name = CombatView.combat_selector.selectedOptions[0].innerText
 	const combat_obj = Combat.objs[combat_name]
-	const status_turn = combat_obj.status_turns[combat_obj.turn]
+	const status_turn = tricker_obj.status_turns
 
 	targets_names.forEach((target_name) => {
 		const target_obj = Char.objs[target_name]
@@ -829,7 +829,7 @@ new Trick(new Action("Accurate Shot", "Guarantees that if the shooter misses an 
 		status_obj.turn(true)
 
 		const old_end = status_obj.end
-		status_obj.end = () => {old_end(target_obj, status_obj)}
+		status_obj.end = () => {old_end(target_obj, status_obj, tricker_obj)}
 
 		target_obj.status.push(status_obj)
 		status_turn.push(status_obj)
