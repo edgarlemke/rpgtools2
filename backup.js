@@ -35,6 +35,16 @@ class Backup {
 		// restore Char
 		Object.keys(container_obj.Char).forEach((char_name) => {
 			const char_obj = container_obj.Char[char_name]
+			const c = char_obj
+			console.log(c)
+
+			const new_char_obj = new Char(c.name, c.age, c.level, c.race, c.class,
+				c.primary_motivation, c.secondary_motivations, c.virtues, c.defects,
+				c.stats_objs.player, c.story, c.aptitudes, c.resistances, c.actions_obj)
+			new_char_obj.health = c.health
+			new_char_obj.status = c.status
+			new_char_obj.status_turns = c.status_turns
+
 			const new_inventory = new Inventory(char_obj)
 			Object.keys(char_obj.inventory_obj).forEach((key) => {
 				// skip char_obj as it's already been set
@@ -43,8 +53,7 @@ class Backup {
 				}
 				new_inventory[key] = char_obj.inventory_obj[key]
 			})
-			char_obj.inventory_obj = new_inventory
-			Char.objs[char_name] = char_obj
+			new_char_obj.inventory_obj = new_inventory
 		})
 		CharView.update()
 
@@ -56,7 +65,7 @@ class Backup {
 		// restore Combat
 		Object.keys(container_obj.Combat).forEach((combat_name) => {
 			const combat_obj = container_obj.Combat[combat_name]
-			const new_combat = new Combat(combat_name, combat_obj.order_obj, combat_obj.teams)
+			const new_combat = new Combat(combat_name, combat_obj.order_obj, combat_obj.teams, true)
 
 			Object.keys(combat_obj).forEach((key) => {
 				new_combat[key] = combat_obj[key]

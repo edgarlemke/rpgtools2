@@ -17,7 +17,7 @@ class Combat {
 			const char_obj = Char.objs[char_name]
 			order_obj_copy[char_name] += char_obj.stats_objs.current.agility
 		})
-		console.log('order_obj_copy', order_obj_copy)
+		// console.log('order_obj_copy', order_obj_copy)
 		
 		const ties = {}
 		const tmp_sorted_order = Object.keys(order_obj_copy).sort((a, b) => {
@@ -39,26 +39,16 @@ class Combat {
 
 			return diff
 		})
-		console.log('tmp_sorter_order', tmp_sorted_order)
+		// console.log('tmp_sorter_order', tmp_sorted_order)
 
-		if (Object.keys(ties).length > 0) {
-			let ties_msg = ''
-
-			Object.keys(ties).forEach((tie_value) => {
-				const tie_array = ties[tie_value]
-				ties_msg += `${tie_array.length} tied chars at combat order ${tie_value}: ${tie_array.join(', ')}<br>`
-			})
-
-			new Modal('Tie at combat order', ties_msg)
-			return
-		}
+		this.ties = ties
 
 		// sorted_order is an array to keep combat order sorting
 		const sorted_order = []
 		tmp_sorted_order.forEach((char_name) => {
 			sorted_order.push([char_name, order_obj[char_name]])
 		})
-		console.log('sorted_order', sorted_order)
+		// console.log('sorted_order', sorted_order)
 		
 		this.sorted_order = sorted_order
 	}
@@ -326,7 +316,19 @@ class CombatView {
 			}
 		}
 
-		new Combat(combat_name, order_obj, teams)
+		const combat_obj = new Combat(combat_name, order_obj, teams)
+
+		if (Object.keys(combat_obj.ties).length > 0) {
+			let ties_msg = ''
+
+			Object.keys(combat_obj.ties).forEach((tie_value) => {
+				const tie_array = combat_obj.ties[tie_value]
+				ties_msg += `${tie_array.length} tied chars at combat order ${tie_value}: ${tie_array.join(', ')}<br>`
+			})
+
+			new Modal('Tie at combat order', ties_msg)
+			return
+		}
 
 		CombatView.update_combat()
 		CombatView.clean_creation_team_members()
