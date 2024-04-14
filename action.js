@@ -56,10 +56,10 @@ class Action {
 
 }
 
-new Action("Withdraw", "Allows a player to move out of the hot zone of combat. Enemies can still see them. Melee attacks aren't possible even if an enemy moves closer after this move for the current/next turn. Only ranger attacks are possible.", 7, null, 0, [], [], true, false, 1)
-new Action("Hide", "Allows a player to avoid being perceived by an enemy. It remains hidden until an enemy uses \"Seek\" with success or the player does some actions that *requires showing*.", 10, null, 0, [], [], true, false, 1)
-new Action("Seek", "Looks for a hidden enemy.", 10, null, 0, [], [], true, true, 1)
-new Action("Insight", "Allows a player to get some important information from the world.", 7, null, 0, [], [], true, false, 1)
+//new Action("Withdraw", "Allows a player to move out of the hot zone of combat. Enemies can still see them. Melee attacks aren't possible even if an enemy moves closer after this move for the current/next turn. Only ranger attacks are possible.", 7, null, 0, [], [], true, false, 1)
+//new Action("Hide", "Allows a player to avoid being perceived by an enemy. It remains hidden until an enemy uses \"Seek\" with success or the player does some actions that *requires showing*.", 10, null, 0, [], [], true, false, 1)
+//new Action("Seek", "Looks for a hidden enemy.", 10, null, 0, [], [], true, true, 1)
+//new Action("Insight", "Allows a player to get some important information from the world.", 7, null, 0, [], [], true, false, 1)
 
 new Action("Consume drug", "Consume drug.", 7, null, 0, [], [], true, false, 1, `
 <div>
