@@ -96,8 +96,9 @@ new Trick(new Action("Jungle Sedative", "Adds Sedated status: who is sedated los
 		const status_name = 'Sedated'
 		const status_obj = {
 			name: status_name,
-			... JSON.parse(JSON.stringify(Char.status_objs[status_name]))
+			... Char.status_objs[status_name]
 		}
+		status_obj.toll = JSON.parse(JSON.stringify(status_obj.toll))
 
 		const old_turn = status_obj.turn
 		status_obj.turn = (skip_duration) => {old_turn(target_obj, status_obj, skip_duration)}
@@ -231,8 +232,9 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 		const status_name = 'Blessed'
 		const status_obj = {
 			name: status_name,
-			... JSON.parse(JSON.stringify(Char.status_objs[status_name]))
+			... Char.status_objs[status_name]
 		}
+		status_obj.toll = JSON.parse(JSON.stringify(status_obj.toll))
 
 		const old_turn = status_obj.turn
 		status_obj.turn = (skip_duration) => {old_turn(target_obj, status_obj, skip_duration)}
@@ -297,8 +299,9 @@ new Trick(new Action("Curse", "Adds Cursed status: subtracts 3 hability points f
 		const status_name = 'Cursed'
 		const status_obj = {
 			name: status_name,
-			... JSON.parse(JSON.stringify(Char.status_objs[status_name]))
+			... Char.status_objs[status_name]
 		}
+		status_obj.toll = JSON.parse(JSON.stringify(status_obj.toll))
 
 		const old_turn = status_obj.turn
 		status_obj.turn = (skip_duration) => {old_turn(target_obj, status_obj, skip_duration)}
@@ -418,8 +421,9 @@ new Trick(new Action("Frenesi", "The player is brought to an altered state of be
 	const status_name = 'Frenesi'
 	const status_obj = {
 		name: status_name,
-		... JSON.parse(JSON.stringify(Char.status_objs[status_name]))
+		... Char.status_objs[status_name]
 	}
+	status_obj.toll = JSON.parse(JSON.stringify(status_obj.toll))
 
 	const old_turn = status_obj.turn
 	status_obj.turn = (skip_duration) => {old_turn(tricker_obj, status_obj, skip_duration)}
@@ -528,7 +532,7 @@ new Trick(new Action("Lullaby", "Sings or plays a lullaby, that calms down an en
 		const status_name = 'Pacified'
 		const status_obj = {
 			name: status_name,
-			... JSON.parse(JSON.stringify(Char.status_objs[status_name]))
+			... Char.status_objs[status_name]
 		}
 		status_obj.char_name = tricker_name
 

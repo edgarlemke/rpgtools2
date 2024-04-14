@@ -684,7 +684,6 @@ class CharView {
 				</tr>
 				<tr>
 					<th>Name</th>
-					<th>Description</th>
 					<th>Setting</th>
 			</thead>
 			<tbody id="char-status-tbody">
@@ -1442,6 +1441,26 @@ class CharView {
 		CharView.resistance_explosion.value = char_obj.resistances.explosion
 		CharView.resistance_cutting.value = char_obj.resistances.cutting
 
+		// fill status
+		remove_children(CharView.status_tbody)
+		char_obj.status.forEach((status_obj) => {
+			const setting_template = document.createElement('template')
+			Object.keys(status_obj).forEach((key) => {
+				if (['name'].includes(key) || ['object', 'function'].includes(typeof status_obj[key])) {
+					return
+				}
+				setting_template.innerHTML += `<span>${key}: ${status_obj[key]}</span><br/>`
+			})
+
+			const template = document.createElement('template')
+			template.innerHTML = `
+<tr>
+	<td>${status_obj.name}</td>
+	<td>${setting_template.innerHTML}</td>
+</tr>
+`
+			CharView.status_tbody.appendChild(...template.content.children)
+		})
 
 		CharView.total_action_points.value = char_obj.actions_obj.total_points
 
@@ -1559,8 +1578,8 @@ CharView.free_action_points = document.getElementById("char-free-action-points")
 
 CharView.aptitudes_and_resistances_container = document.getElementById("char-aptitudes-and-resistances-container")
 
-CharView.status = document.getElementById("chat-status")
-CharView.status_tbody = document.getElementById("chat-status-tbody")
+CharView.status = document.getElementById("char-status")
+CharView.status_tbody = document.getElementById("char-status-tbody")
 
 CharView.aptitude_air = document.getElementById('char-aptitude-air')
 CharView.resistance_air = document.getElementById('char-resistance-air')
