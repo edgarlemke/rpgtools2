@@ -1142,6 +1142,9 @@ class CharView {
 		CharView.stat_total_dextrity.innerHTML = total_stats.dextrity
 		CharView.stat_total_intelligence.innerHTML = total_stats.intelligence
 		CharView.stat_total_charisma.innerHTML = total_stats.charisma
+
+		this.fill_status_stats()
+		this.fill_current_stats()
 	}
 
 	static fill_status_stats () {
