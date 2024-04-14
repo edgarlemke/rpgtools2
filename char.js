@@ -373,9 +373,6 @@ class Char {
 			}
 
 			Object.keys(status_obj.toll.stats).forEach((hability) => {
-				console.log('hability', hability)
-				console.log('toll', status_obj.toll)
-				console.log('stats', status_obj.toll.stats)
 				status_stats[hability] += status_obj.toll.stats[hability]
 			})
 		})

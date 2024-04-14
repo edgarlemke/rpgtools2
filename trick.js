@@ -96,8 +96,9 @@ new Trick(new Action("Jungle Sedative", "Adds Sedated status: who is sedated los
 		const status_name = 'Sedated'
 		const status_obj = {
 			name: status_name,
-			...Char.status_objs[status_name]
+			... JSON.parse(JSON.stringify(Char.status_objs[status_name]))
 		}
+
 		const old_turn = status_obj.turn
 		status_obj.turn = (skip_duration) => {old_turn(target_obj, status_obj, skip_duration)}
 		status_obj.turn(true)
@@ -230,8 +231,9 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 		const status_name = 'Blessed'
 		const status_obj = {
 			name: status_name,
-			...Char.status_objs[status_name]
+			... JSON.parse(JSON.stringify(Char.status_objs[status_name]))
 		}
+
 		const old_turn = status_obj.turn
 		status_obj.turn = (skip_duration) => {old_turn(target_obj, status_obj, skip_duration)}
 		status_obj.turn(true)
@@ -244,17 +246,9 @@ new Trick(new Action("Bless", "Adds Blessed status, adds 3 hability points for a
 
 		// adds given points to all habilities 
 		Object.keys(target_obj.stats_objs.current).forEach((key) => {
-			//console.log('Bless key', key)
-			//console.log('Bless status_obj.points', status_obj.points)
-
 			target_obj.stats_objs.current[key] += status_obj.points
-
-			//console.log('before', status_obj.toll.stats[key])
 			status_obj.toll.stats[key] += status_obj.points
-			//console.log('after', status_obj.toll.stats[key])
 		})
-
-		//console.log('Bless toll stats', status_obj.toll.stats)
 	})
 
 	return result
@@ -303,8 +297,9 @@ new Trick(new Action("Curse", "Adds Cursed status: subtracts 3 hability points f
 		const status_name = 'Cursed'
 		const status_obj = {
 			name: status_name,
-			...Char.status_objs[status_name]
+			... JSON.parse(JSON.stringify(Char.status_objs[status_name]))
 		}
+
 		const old_turn = status_obj.turn
 		status_obj.turn = (skip_duration) => {old_turn(target_obj, status_obj, skip_duration)}
 		status_obj.turn(true)
@@ -312,21 +307,14 @@ new Trick(new Action("Curse", "Adds Cursed status: subtracts 3 hability points f
 		const old_end = status_obj.end
 		status_obj.end = () => {old_end(target_obj, status_obj, tricker_obj)}
 
-		console.log('Curse status_obj', status_obj)
 		target_obj.status.push(status_obj)
 		status_turn.push(status_obj)
 
 		// take points from all habilities 
 		Object.keys(target_obj.stats_objs.current).forEach((key) => {
-			console.log('Curse key', key)
-			console.log('Curse status_obj.points', status_obj.points)
 			target_obj.stats_objs.current[key] -= status_obj.points
-
-			console.log('before', status_obj.toll.stats[key])
 			status_obj.toll.stats[key] -= status_obj.points
-			console.log('after', status_obj.toll.stats[key])
 		})
-		console.log('Curse toll stats', status_obj.toll.stats)
 	})
 
 	return result
@@ -376,6 +364,7 @@ new Trick(new Action("Alchemical Imobilization", "Adds Imobilized status: who ge
 			name: status_name,
 			...Char.status_objs[status_name]
 		}
+
 		const old_turn = status_obj.turn
 		status_obj.turn = (skip_duration) => {old_turn(target_obj, status_obj, skip_duration)}
 		status_obj.turn(true)
@@ -429,8 +418,9 @@ new Trick(new Action("Frenesi", "The player is brought to an altered state of be
 	const status_name = 'Frenesi'
 	const status_obj = {
 		name: status_name,
-		...Char.status_objs[status_name]
+		... JSON.parse(JSON.stringify(Char.status_objs[status_name]))
 	}
+
 	const old_turn = status_obj.turn
 	status_obj.turn = (skip_duration) => {old_turn(tricker_obj, status_obj, skip_duration)}
 	status_obj.turn(true)
@@ -538,7 +528,7 @@ new Trick(new Action("Lullaby", "Sings or plays a lullaby, that calms down an en
 		const status_name = 'Pacified'
 		const status_obj = {
 			name: status_name,
-			...Char.status_objs[status_name]
+			... JSON.parse(JSON.stringify(Char.status_objs[status_name]))
 		}
 		status_obj.char_name = tricker_name
 
