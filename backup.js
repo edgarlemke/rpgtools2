@@ -11,7 +11,7 @@ class Backup {
 
 		// check if current backup is different than last stored backup
 		const keys = Backup.get_localstorage_keys()
-		const last_key = keys[keys.length-1]
+		const last_key = keys[0]
 
 		// stringified, decycled container
 		const last_backup = localStorage.getItem(last_key)
@@ -19,8 +19,15 @@ class Backup {
 		const str_container = JSON.stringify(backup.container)
 
 		const has_changes = last_backup != str_container
-
 		if (has_changes) {
+			while (keys.length >= Backup.limit) {
+				const index = keys.length - 1
+				const old_key = keys[index]
+				localStorage.removeItem(keys[index])
+				keys.splice(index, 1)
+				console.log('Removed backup from localStorage: ' + old_key)
+			}
+
 			localStorage.setItem(backup.name, JSON.stringify(backup.container))
 			console.log('Saved backup to localStorage: ' + backup.name, backup)
 		}
@@ -88,10 +95,20 @@ class Backup {
 	
 			keys.push(key)
 		}
-		keys.sort()
+
+		keys.sort(function(a,b) {
+			const toDate = (local_storage_key) => {
+				const split_local_storage_key = local_storage_key.substring('backup-clash-of-desires-'.length).split('__')
+				const d = split_local_storage_key[0].split('/')
+				const t = split_local_storage_key[1].split('_')
+				return new Date(d[2], d[1], d[0], t[0], t[1], t[2])
+			}
+			const a_date = toDate(a)
+			const b_date = toDate(b)
+			return a_date > b_date ? -1 : a_date < b_date ? 1 : 0
+		})
 
 		return keys
-
 	}
 
 	constructor (name) {
@@ -210,14 +227,8 @@ BackupView.local_storage_body_scroll = document.getElementById('backup-local-sto
 
 window.setInterval(() => {
 	const keys = Backup.get_localstorage_keys()
-	// console.log('keys', keys, keys.length)
+
 	
-	while (keys.length >= Backup.limit) {
-		const old_key = keys[0]
-		localStorage.removeItem(keys[0])
-		keys.shift()
-		console.log('Removed backup from localStorage: ' + old_key)
-	}
 
 	if (Backup.export_localStorage()) {
 		BackupView.fill_local_storage()
