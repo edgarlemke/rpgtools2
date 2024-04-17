@@ -48,8 +48,8 @@ class Ammo {
 
 new Ammo(new Item("Arrow", "Ammo for bows", 1, 10, false, true, {Wood: 1}, null, 1, null, null))
 new Ammo(new Item("Dart", "Ammo for crossbows", 1, 10, false, true, {Wood: 1, Material: 1}, null, 1, null, null))
-new Ammo(new Item("Pistol ammo", "Ammo for pistols", 1, 10, false, true, {Powder: 1, 'Cartridge case': 1, Bullet: 1}, null, 1, null, null))
+//new Ammo(new Item("Pistol ammo", "Ammo for pistols", 1, 10, false, true, {Powder: 1, 'Cartridge case': 1, Bullet: 1}, null, 1, null, null))
 new Ammo(new Item("Revolver ammo", "Ammo for revolvers", 1, 10, false, true, {Powder: 1, 'Cartridge case': 1, Bullet: 1}, null, 1, null, null))
-new Ammo(new Item("Shotgun ammo", "Ammo for shotguns", 1, 5, false, true, {Powder: 1, 'Cartridge case': 1, Bullet: 1}, null, 1, null, null))
-new Ammo(new Item("Rifle ammo", "Ammo for rifles", 1, 5, false, true, {Powder: 1, 'Cartridge case': 1, Bullet: 1}, null, 1, null, null))
-new Ammo(new Item("Sniper rifle ammo", "Ammor for sniper rifles", 1, 5, false, true, {Powder: 1, 'Cartridge case': 1, Bullet: 1}, null, 1, null, null))
+// new Ammo(new Item("Shotgun ammo", "Ammo for shotguns", 1, 5, false, true, {Powder: 1, 'Cartridge case': 1, Bullet: 1}, null, 1, null, null))
+// new Ammo(new Item("Rifle ammo", "Ammo for rifles", 1, 5, false, true, {Powder: 1, 'Cartridge case': 1, Bullet: 1}, null, 1, null, null))
+// new Ammo(new Item("Sniper rifle ammo", "Ammor for sniper rifles", 1, 5, false, true, {Powder: 1, 'Cartridge case': 1, Bullet: 1}, null, 1, null, null))

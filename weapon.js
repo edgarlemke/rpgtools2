@@ -68,9 +68,9 @@ class Weapon {
 }
 
 
-new Weapon(new Item("Bow", " ", null, 1, true, true, {Wood: 4, Material: 2}, null, 1, null, null), ["Dextrity", "Agility"], 6, ["Shooting"], "Arrow")
-new Weapon(new Item("Crossbow", " ", null, 1, true, true, {Wood: 2, Material: 3, Metal: 2}, null, 1, null, null), ["Dextrity"], 6, ["Shooting"], "Dart")
-new Weapon(new Item("Revolver", " ", null, 1, true, true, {Wood: 1, Material: 2, Metal: 4}, null, 1, null, null), ["Dextrity", "Agility"], 6, ["Shooting"], "Revolver ammo")
+new Weapon(new Item("Bow", "Who buys it as first item gets 4 extra coins.", null, 1, true, true, {Wood: 4, Material: 2}, 24, 1, null, null), ["Dextrity", "Agility"], 4, ["Shooting"], "Arrow")
+new Weapon(new Item("Crossbow", "Who buys it as first item gets 6 extra coins.", null, 1, true, true, {Wood: 3, Material: 3, Metal: 2}, 36, 1, null, null), ["Dextrity"], 5, ["Shooting"], "Dart")
+new Weapon(new Item("Revolver", "Who buys it as first item gets 12 extra coins.", null, 1, true, true, {Wood: 1, Material: 3, Metal: 5}, 52, 1, null, null), ["Dextrity", "Agility"], 6, ["Shooting"], "Revolver ammo")
 
 // new Weapon(new Item("Pistol", " ", null, 1, true, true, {Wood: 2, Material: 1, Metal: 4}, null, 1, null, null), ["Shooting"], "Pistol ammo")
 // new Weapon(new Item("Shotgun", " ", null, 1, true, true, {Wood: 2, Material: 1, Metal: 5}, null, 1, null, null), ["Shooting"], "Shotgun ammo")
@@ -80,33 +80,33 @@ new Weapon(new Item("Revolver", " ", null, 1, true, true, {Wood: 1, Material: 2,
 //new Weapon(new Item("Granade launcher", " ", null, 1, true, true, {Wood: 1, Material: 2, Metal: 7}, null, 1, null, null), ["Explosion"])
 
 // new Weapon(new Item("Survival Knife", " ", null, 1, true, true, {Wood: 0, Material: 1, Metal: 3}, null, 1, null, null), ["Cutting", "Perfuration"])
-new Weapon(new Item("Scimitar", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 4}, null, 1, null, null), ["Dextrity", "Agility"], 6, ["Cutting"], null)
-new Weapon(new Item("Rapier", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 4}, null, 1, null, null), ["Dextrity", "Agility"], 6, ["Perfuration"], null)
+new Weapon(new Item("Scimitar", " ", null, 1, true, true, {Wood: 1, Material: 3, Metal: 5}, null, 1, null, null), ["Dextrity", "Agility"], 6, ["Cutting"], null)
+new Weapon(new Item("Rapier", " ", null, 1, true, true, {Wood: 1, Material: 3, Metal: 5}, null, 1, null, null), ["Dextrity", "Agility"], 6, ["Perfuration"], null)
 
 // new Weapon(new Item("Spear", " ", null, 1, true, true, {Wood: 4, Material: 1, Metal: 2}, null, 1, null, null), ["Cutting", "Perfuration", "Throwing"])
-new Weapon(new Item("Light War Axe", " ", null, 1, true, true, {Wood: 2, Material: 1, Metal: 5}, null, 1, null, null), ["Strength", "Dextrity"], 6, ["Impact", "Cutting"], null)
+new Weapon(new Item("Light War Axe", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 4}, null, 1, null, null), ["Strength", "Dextrity"], 5, ["Impact", "Cutting"], null)
 
 // new Weapon(new Item("Stick", " ", null, 1, true, true, {Wood: 5, Material: 1, Metal: 0}, null, 1, null, null), ["Impact"])
-new Weapon(new Item("Light War Hammer", " ", null, 1, true, true, {Wood: 2, Material: 1, Metal: 4}, null, 1, null, null), ["Strength"], 6, ["Impact"], null)
+new Weapon(new Item("Light War Hammer", " ", null, 1, true, true, {Wood: 1, Material: 3, Metal: 5}, null, 1, null, null), ["Strength"], 6, ["Impact"], null)
 // new Weapon(new Item("Claw", " ", null, 1, true, true, {Wood: 2, Material: 0, Metal: 4}, null, 1, null, null), ["Impact"])
 
-new Weapon(new Item("Wand", " ", null, 1, true, true, {Wood: 4, Material: 1, Metal: 2}, null, 1, null, null), ["Intelligence", "Charisma"], 6, ["Fire", "Air", "Water", "Earth", "Electricity", "Cheese"], null)
-// new Weapon(new Item("Staff", " ", null, 1, true, true, {Wood: 1, Material: 2, Metal: 6}, null, 1, null, null), ["Fire", "Air", "Water", "Earth", "Electricity"])
+new Weapon(new Item("Wand", " ", null, 1, true, true, {Wood: 4, Material: 1, Metal: 2}, null, 1, null, null), ["Intelligence", "Charisma"], 5, ["Fire", "Air", "Water", "Earth", "Electricity", "Cheese"], null)
+new Weapon(new Item("Staff", " ", null, 1, true, true, {Wood: 1, Material: 3, Metal: 5}, null, 1, null, null), ["Intelligence", "Charisma"], 6, ["Fire", "Air", "Water", "Earth", "Electricity", "Cheese"], null)
 
-new Weapon(new Item("Grimorium", " ", null, 1, true, true, {Wood: 0, Material: 3, Metal: 3}, null, 1, null, null), ["Intelligence", "Charisma"], 6, ["Invocation"], null)
-
-new Weapon(new Item("Instrument", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 4}, null, 1, null, null), ["Charisma"], 6, ["Illusion"], null)
-new Weapon(new Item("Sinister Deck", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 4}, null, 1, null, null), ["Charisma", "Dextrity"], 6, ["Illusion", "Cutting"], null)
+new Weapon(new Item("Sinister Deck", " ", null, 1, true, true, {Wood: 0, Material: 1, Metal: 3}, null, 1, null, null), ["Charisma", "Dextrity"], 4, ["Psychic", "Cutting", "Invocation"], null)
+new Weapon(new Item("Grimorium", " ", null, 1, true, true, {Wood: 0, Material: 5, Metal: 5}, null, 1, null, null), ["Intelligence", "Charisma"], 6, ["Invocation"], null)
+new Weapon(new Item("Instrument", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 4}, null, 1, null, null), ["Charisma"], 6, ["Psychic"], null)
 
 //new Weapon(new Item("Cheesegun", " ", 1, 5, true, true, {Wood: , Material: , Metal: }, null, 1, null, null), ["Cheese"])
 
-new Weapon(new Item("Light Kwink", " ", null, 1, true, true, {Wood: 0, Material: 3, Metal: 3}, null, 1, null, null), ["Dextrity"], 6, [], null)
+new Weapon(new Item("Light Kwink", " ", null, 1, true, true, {Wood: 4, Material: 3, Metal: 3}, null, 1, null, null), ["Strength", "Dextrity", "Agility"], 6, ["Cutting", "Perfuration", "Impact", "Electricity"], null)
 
-new Weapon(new Item("Ghoul Strength Damage Kit", " ", null, 1, true, true, {Wood: 0, Material: 3, Metal: 3}, null, 1, ["Ghoul"], null), ["Strength", "Dextrity"], 6, ["Impact", "Cutting"], null)
-new Weapon(new Item("Ghoul Agility Damage Kit", " ", null, 1, true, true, {Wood: 0, Material: 3, Metal: 3}, null, 1, ["Ghoul"], null), ["Dextrity", "Agility"], 6, ["Cutting", "Perfuration"], null)
+new Weapon(new Item("Ghoul Strength Damage Kit", " ", null, 1, true, true, {Wood: 1, Material: 3, Metal: 5}, null, 1, ["Ghoul"], null), ["Strength", "Dextrity"], 6, ["Impact", "Cutting"], null)
+new Weapon(new Item("Ghoul Agility Damage Kit", " ", null, 1, true, true, {Wood: 1, Material: 3, Metal: 5}, null, 1, ["Ghoul"], null), ["Dextrity", "Agility"], 6, ["Cutting", "Perfuration"], null)
 
-new Weapon(new Item("Dynamite", "Drops the item when attacks with it.", null, 1, true, true, {Wood: 4, Material: 2}, null, 1, null, null), ["Dextrity"], 6, ["Explosion"], null)
-new Weapon(new Item("Granade", "The boomerang comes back to the attacker. Drops the item when attacks with it.", null, 1, true, true, {Material: 2, Metal: 1}, null, 1, null, null), ["Dextrity"], 6, ["Explosion"], null)
+new Weapon(new Item("Dynamite", "Drops the item when attacks with it.", null, 1, true, true, {Wood: 4, Material: 2}, 30, 1, null, null), ["Dextrity"], 5, ["Explosion"], null)
+new Weapon(new Item("Granade", "Drops the item when attacks with it.", null, 1, true, true, {Material: 2, Metal: 1}, 40, 1, null, null), ["Dextrity"], 6, ["Explosion"], null)
 
-new Weapon(new Item("Bola", "Drops the item when attacks with it.", null, 1, true, true, {Wood: 4, Material: 2}, null, 1, null, null), ["Dextrity"], 6, ["Throwing"], null)
-new Weapon(new Item("Boomerang", "The boomerang comes back to the attacker", null, 1, true, true, {Wood: 4, Material: 2}, null, 1, null, null), ["Dextrity"], 6, ["Throwing"], null)
+new Weapon(new Item("Bola", "Drops the item when attacks with it.", null, 1, true, true, {Wood: 4, Material: 2}, 20, 1, null, null), ["Dextrity"], 4, ["Throwing"], null)
+new Weapon(new Item("Boomerang", "The boomerang comes back to the attacker.", null, 1, true, true, {Wood: 4, Material: 2, Metal: 1}, 30, 1, null, null), ["Dextrity"], 5, ["Throwing"], null)
+new Weapon(new Item("Bola-Flail", "Metal bola with flail spikes.", null, 1, true, true, {Wood: 1, Material: 3, Metal: 5}, 40, 1, null, null), ["Dextrity"], 6, ["Throwing"], null)

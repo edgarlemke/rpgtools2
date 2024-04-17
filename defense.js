@@ -54,10 +54,11 @@ class Defense {
 }
 
 
-new Defense(new Item("Shield", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 0}, null, 0, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Acid", "Throwing"])
-new Defense(new Item("Gloves", " ", null, 1, true, true, {Wood: 0, Material: 2, Metal: 0}, null, 0, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Acid", "Throwing"])
-new Defense(new Item("Armour", " ", null, 1, true, true, {Wood: 0, Material: 2, Metal: 0}, null, 0, null, null), 2, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Acid", "Throwing"])
-new Defense(new Item("Elm", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 0}, null, 0, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Acid", "Throwing"])
-new Defense(new Item("Boots", " ", null, 1, true, true, {Wood: 0, Material: 2, Metal: 0}, null, 0, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Acid", "Throwing"])
+new Defense(new Item("Shield", " ", null, 1, true, true, {Wood: 1, Material: 1, Metal: 1}, null, 1, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Acid", "Throwing"])
+new Defense(new Item("Gloves", " ", null, 1, true, true, {Wood: 0, Material: 2, Metal: 0}, null, 1, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Acid", "Throwing"])
+new Defense(new Item("Armour", " ", null, 1, true, true, {Wood: 0, Material: 2, Metal: 1}, null, 1, null, null), 2, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Acid", "Throwing"])
+new Defense(new Item("Elm", " ", null, 1, true, true, {Wood: 0, Material: 2, Metal: 1}, null, 1, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Acid", "Throwing"])
+new Defense(new Item("Boots", " ", null, 1, true, true, {Wood: 0, Material: 2, Metal: 0}, null, 1, null, null), 1, ["Perfuration", "Cutting", "Shooting", "Explosion", "Impact", "Acid", "Throwing"])
 
-new Defense(new Item("Elemental Talisman", "", null, 1, true, true, {Wood: 2, Material: 2, Metal: 2}, null, 0, null, null), 6, ["Air", "Water", "Fire", "Earth", "Cheese", "Electricity", "Psychic", "Invocation"])
+// complete armour kit costs 40 coins
+new Defense(new Item("Talisman", "", null, 1, true, true, {Wood: 2, Material: 2, Metal: 2}, 20, 1, null, null), 3, ["Air", "Water", "Fire", "Earth", "Cheese", "Electricity", "Psychic", "Invocation"])
