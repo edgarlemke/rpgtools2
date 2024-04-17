@@ -99,6 +99,10 @@ class Attack {
 				const item_obj = Item.objs[item_name]
 				// console.log('item_obj', item_obj)
 
+				if (!item_obj.meta_obj.damage_types) {
+					return
+				}
+
 				const is_defense = Object.keys(Defense.objs).includes(item_name)
 				const matches_damage_type = item_obj.meta_obj.damage_types.filter((damage_type_) => {return damage_type_.toLowerCase() == damage_type}).length > 0
 
