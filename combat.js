@@ -319,12 +319,38 @@ class CombatView {
 		const combat_obj = new Combat(combat_name, order_obj, teams)
 
 		if (Object.keys(combat_obj.ties).length > 0) {
+			const sorted_order_obj = Object.keys(combat_obj.order_obj).sort((a,b) => {
+				return combat_obj.order_obj[a] < combat_obj.order_obj[b] ? 1 : (combat_obj.order_obj[a] > combat_obj.order_obj[b] ? -1 : 0)
+			})
+			console.log(sorted_order_obj)
+
 			let ties_msg = ''
 
 			Object.keys(combat_obj.ties).forEach((tie_value) => {
 				const tie_array = combat_obj.ties[tie_value]
-				ties_msg += `${tie_array.length} tied chars at combat order ${tie_value}: ${tie_array.join(', ')}<br>`
+				ties_msg += `<p>${tie_array.length} tied chars at combat order ${tie_value}: ${tie_array.join(', ')}</p>`
 			})
+
+			ties_msg += `<section>
+	<table>
+		<thead>
+			<tr>
+				<th>Char</th>
+				<th>Combat Order</th>
+			</tr>
+		</thead>
+		<tbody>
+`
+
+			sorted_order_obj.forEach((char_name) => {
+				ties_msg += `<tr><td>${char_name}</td><td>${combat_obj.order_obj[char_name]}</td></tr>`
+			})
+
+			ties_msg += `</tbody>
+	</table>
+	<span><small>Highest values have more precedence in combat.</small></span>
+</section>
+`
 
 			new Modal('Tie at combat order', ties_msg)
 			return
