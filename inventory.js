@@ -18,28 +18,7 @@ class Inventory {
 
 		this.equipped.forEach((item_index) => {
 			const item_name = this.items[item_index]
-
-			switch (item_name) {
-				case 'Strength ring':
-					stats.strength += 1
-					break
-
-				case 'Agility ring':
-					stats.agility += 1
-					break
-
-				case 'Dextrity ring':
-					stats.dextrity += 1
-					break
-
-				case 'Intelligence ring':
-					stats.intelligence += 1
-					break
-
-				case 'Charisma ring':
-					stats.charisma += 1
-					break
-			}
+			this.get_stat_item_stats(item_name, stats)
 		})
 
 		return stats
@@ -118,6 +97,49 @@ class Inventory {
 		this.equipped.splice(this.equipped.indexOf(item_index, 1))
 		Inventory.drops.push(this.items[item_index])
 		this.items.splice(item_index, 1)
+	}
+
+	toggle_equip_stat_item (item_name, op) {
+		const stats = new Stats(0,0,0,0,0)
+		this.get_stat_item_stats(item_name, stats)
+
+		if (op == "Equip") {
+			Object.keys(stats).forEach((hability) => {
+				this.char_obj.stats_objs.current[hability] -= stats[hability]
+			})
+		}
+		else if (op == "Unequip") {
+			Object.keys(stats).forEach((hability) => {
+				this.char_obj.stats_objs.current[hability] += stats[hability]
+			})
+		}
+		else {
+			throw "Invalid op: " + op
+		}
+	}
+
+	get_stat_item_stats (item_name, stats) {
+			switch (item_name) {
+				case 'Strength ring':
+					stats.strength += 1
+					break
+
+				case 'Agility ring':
+					stats.agility += 1
+					break
+
+				case 'Dextrity ring':
+					stats.dextrity += 1
+					break
+
+				case 'Intelligence ring':
+					stats.intelligence += 1
+					break
+
+				case 'Charisma ring':
+					stats.charisma += 1
+					break
+			}
 	}
 }
 
@@ -248,6 +270,8 @@ class InventoryView {
 			inventory_obj.equipped.splice(inventory_obj.equipped.indexOf(item_index, 1))
 		}
 
+		inventory_obj.toggle_equip_stat_item(item_name, button.innerText)
+
 		//console.log(inventory_obj.equipped)
 	}
 
@@ -323,6 +347,7 @@ class InventoryView {
 		const inventory_obj = char_obj.inventory_obj
 
 		inventory_obj.items.splice(item_index, 1)
+		inventory_obj.equipped.splice(inventory_obj.equipped.indexOf(item_index, 1))
 		inventory_obj.coins += item_obj.price
 
 		InventoryView.select_char()
