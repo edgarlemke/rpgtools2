@@ -39,6 +39,11 @@ nav li {
 	background-color: var(--content-bg-color);
 }
 
+nav li a {
+	color: inherit;
+	text-decoration: inherit;
+}
+
 nav li.selected {
 	background-color: white;
 	color: black;

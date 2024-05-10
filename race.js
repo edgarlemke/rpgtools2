@@ -63,4 +63,6 @@ new Race("Elemental", "Person made of an elemental.", new Stats(1, 1, 2, 3, 3), 
 new Race("Golem",        "A creature made of inanimate matter and impregnated with magical wish to make a conscious being.", new Stats(1, 1, 1, 1, 1), true)
 //new Race("Undead",        "It can be a ghost, a skeleton or a mummy.", new Stats(1, 2, 2, 3, 2), false)
 
-new Content("races", Race.get_html())
+try {
+	new Content("races", Race.get_html())
+} catch (e) {}

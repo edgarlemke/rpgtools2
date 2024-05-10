@@ -114,7 +114,7 @@ new Trick(new Action("Jungle Sedative", "Adds Sedated status: who is sedated los
 	return result
 })
 
-new Trick(new Action("Minor Healing", "Recovers health points. Heals (50 + TRH + D20) points.", 1, ["Intelligence"], 11, [], ["Witch", "Chimera"], false, false, 1), `
+new Trick(new Action("Minor Healing", "Recovers health points. Heals (50 + TRH + D20) points.", 11, ["Intelligence"], 1, [], ["Witch", "Chimera"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <div><b>HEAL:</b> 50 + TRH + D20</div>
 <ul>
@@ -445,7 +445,7 @@ new Trick(new Action("Frenesi", "The player is brought to an altered state of be
 })
 
 
-new Trick(new Action("Mirrors and Smoke", "Allows the Circus Artist to Hide more easily.", 0, ["Dextrity", "Charisma"], 11, [], ["Circus Artist"], false, false, 1), `
+new Trick(new Action("Mirrors and Smoke", "Allows the Circus Artist to Hide more easily.", 11, ["Dextrity", "Charisma"], 1, [], ["Circus Artist"], false, false, 1), `
 <div><b>TEST:</b> (TRH + D20) >= DIF</div>
 <ul>
 	<li>TRH - Tricker Hability</li>

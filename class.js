@@ -58,4 +58,6 @@ new Class("Chimera",       "Look at this animal. What is it? It has the head of 
 new Class("Messiah",         "There's only One God and He's your God! There's only One Messiah and it's Me!", new Stats(0, 0, 1, 3, 1))
 //new Class("Mirror",         "Good artists copy, great artists copy even more.", new Stats(2, 1, 1, 1, 0))
 
-new Content("classes", Class.get_html())
+try {
+	new Content("classes", Class.get_html())
+} catch (e) {}

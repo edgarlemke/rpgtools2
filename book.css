@@ -1,0 +1,86 @@
+@media all {
+	body {
+		background-color: white;
+		color: black;
+		margin: 0;
+	}
+
+	.page,
+ 	div.race-container,
+	div.class-container,
+	div.item-container,
+	div.action-container 
+	{
+		page-break-after: always;
+		width: 21cm;
+		height: 29.7cm;
+		margin: 0;
+		padding: 0;
+		top: 0;
+		left: 0;
+		border: solid 1px white;
+	}
+
+	.page-center {
+		text-align: center;
+	}
+
+	.page :after {
+	}
+
+	h1 {
+		font-size: 5em;
+	}
+
+	h2 {
+		font-size: 4em;
+	}
+	.center-page {
+		margin: 50% auto;
+	}
+
+	table, tr, td, th {
+		border: solid 1px black;
+		border-collapse: collapse;
+	}
+	td, th {
+		padding: 5px;
+	}
+
+	div.races-container div,
+	div.class-container div,
+	div.item-container div,
+	div.action-container div {
+		padding: 10px;
+	}
+
+	div.race-stats table,
+	div.class-stats table,
+	div.item-container table,
+	div.action-container table {
+		margin: 0 auto;
+	}
+
+	div.race-name,
+	div.class-name,
+	div.item-name,
+	div.action-name {
+		font-size: 3em;
+	}
+}
+
+@media print {
+	#not-printable-container {
+		display: none;
+	}
+}
+
+@media not print {
+        #not-printable-container {
+                padding: 5px;
+        }
+	#printable-container {
+		display: none;
+	}
+}
+

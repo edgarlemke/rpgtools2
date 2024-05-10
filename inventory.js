@@ -157,8 +157,10 @@ class InventoryView {
 	
 	<div>
 		<h2>Inventory</h2>
+		<div style="display: none">
 		<div>Capacity: <div id="inventory-capacity"></div></div>
 		<div>Free capacity: <div id="inventory-free-capacity"></div></div>
+		</div>
 		<div>Coins: <input type="number" id="inventory-coins" min="0" value="0" onchange="InventoryView.update_coins()"></div>
 		<table id="inventory-items">
 			<thead>
@@ -407,23 +409,22 @@ class InventoryView {
 			'Engineer' : ['Light Kwink'],
 			'Witch' : ['Wand', 'Grimorium'],
 			'Alchemist' : ['Wand'],
-			//'Mentalist': ['Instrument', 'Wand'],
 			'Chimera' : ['Wand'],
 			'Demonologist' : ['Wand', 'Grimorium'],
 			'Messiah' : ['Wand', 'Grimorium', 'Sinister Deck'],
-			//'Slime' : ['Wand'], // can use any weapon according to habilities
 			'Circus Artist' : ['Instrument', 'Sinister Deck'],
 
 			'Ghoul' : ['Ghoul Strength Damage Kit', 'Ghoul Agility Damage Kit'],
 			'Elemental' : ['Wand'],
-			//'Undead' : ['Wand', 'Grimorium']
+		}
+
+		if (!InventoryView.char_selector.selectedOptions[0]) {
+			return
 		}
 
 		const char_name = InventoryView.char_selector.selectedOptions[0].innerText
 		const char_obj = Char.objs[char_name]
 		const highest_stats = char_obj.get_highest_stats()
-
-		//console.log('char_obj', char_obj)
 
 		const buy_ammo = function (item_name) {
 			const max_spending = 20 + (dice(3) * 10)
@@ -441,21 +442,12 @@ class InventoryView {
 		const race_obj = Race.objs[char_obj.race]
 		const hints = race_obj.has_class ? weapon_hints[char_obj.class] : weapon_hints[char_obj.race]
 
-
 		if (hints.length > 0) {
-
-			//console.log('hints', hints)
-	
 			let hints_filtered_level = hints.filter((item_name) => {
 				const item_obj = Item.objs[item_name]
 				const habilities = item_obj.meta_obj.habilities
-				//console.log('item habilities')
-				//console.log(habilities)
-	
 				return !(item_obj.level > char_obj.level) 
 			})
-	
-			//console.log('hints_filtered_level', hints_filtered_level)
 	
 			let hints_filtered = hints_filtered_level.filter((item_name) => {
 				const item_obj = Item.objs[item_name]
@@ -464,8 +456,6 @@ class InventoryView {
 				let matches = false
 				highest_stats.forEach((hability) => {
 					const tuc_hability = hability[0].toUpperCase() + hability.slice(1)
-					//console.log('tuc_hability: ' + tuc_hability)
-	
 					if (habilities.includes(tuc_hability)) {
 						matches = true
 					}
@@ -474,8 +464,6 @@ class InventoryView {
 				return matches
 			})
 			hints_filtered = hints_filtered.length > 0 ? hints_filtered : hints_filtered_level
-	
-			//console.log('hints_filtered', hints_filtered)
 	
 			const primary_weapon = hints_filtered[ dice(hints_filtered.length) - 1 ]
 			const bought_primary_weapon = InventoryView._buy(char_name, primary_weapon)
@@ -512,9 +500,6 @@ class InventoryView {
 		}
 
 		const random_stuff = [...Object.keys(Defense.objs), ...Object.keys(Drug.objs)]
-		// console.log('random_stuff')
-		// console.log(random_stuff)
-		// console.log(typeof random_stuff)
 
 		while (true) {
 			let can_buy = random_stuff.filter((item_name) => {
@@ -531,17 +516,11 @@ class InventoryView {
 				return true
 			})
 
-			//console.log('can_buy')
-			//console.log(can_buy)
-
 			if (can_buy.length == 0) {
 				break
 			}
 
 			const to_buy = can_buy[ dice(can_buy.length) - 1 ]
-			// console.log('to_buy')
-			// console.log(to_buy)
-
 			InventoryView._buy(char_name, to_buy)
 		}
 

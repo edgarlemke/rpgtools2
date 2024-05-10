@@ -13,7 +13,7 @@
 		<link rel="stylesheet" href="char.css"/>
 		<link rel="stylesheet" href="inventory.css"/>
 		<link rel="stylesheet" href="combat.css"/>
-		<link rel="stylesheet" href="map.css"/>
+		<!-- <link rel="stylesheet" href="map.css"/> -->
 		<link rel="stylesheet" href="backup.css"/>
 	</head>
 	<body>
@@ -23,6 +23,7 @@
 			</header>
 			<nav id="main-nav">
 				<ul>
+					<li onclick="Content.show('rules', this)">Rules</li>
 					<li onclick="Content.show('races', this)">Races</li>
 					<li onclick="Content.show('classes', this)">Classes</li>
 					<li onclick="Content.show('items', this)">Items</li>
@@ -30,9 +31,10 @@
 					<li onclick="Content.show('chars', this)">Chars</li>
 					<li onclick="Content.show('inventory', this)">Inventory</li>
 					<li onclick="Content.show('combats', this)">Combats</li>
-					<li onclick="Content.show('test', this)">Test</li>
-					<li onclick="Content.show('map', this)">Map</li>
+					<!-- <li onclick="Content.show('test', this)">Test</li>
+					<li onclick="Content.show('map', this)">Map</li> -->
 					<li onclick="Content.show('backup', this)">Backup</li>
+					<li><a href="book.html">Book</a></li>
 				</ul>
 			</nav>
 			<section id="content-container">
@@ -43,6 +45,7 @@
 		<script type="text/javascript" src="modal.js"></script>
 		<script type="text/javascript" src="content.js"></script>
 		<script type="text/javascript" src="stats.js"></script>
+		<script type="text/javascript" src="rule.js"></script>
 		<script type="text/javascript" src="race.js"></script>
 		<script type="text/javascript" src="class.js"></script>
 		<script type="text/javascript" src="item.js"></script>
@@ -54,17 +57,19 @@
 		<script type="text/javascript" src="action.js"></script>
 		<script type="text/javascript" src="attack.js"></script>
 		<script type="text/javascript" src="trick.js"></script>
-		<script type="text/javascript" src="badge.js"></script>
+		<!-- <script type="text/javascript" src="badge.js"></script> -->
 		<script type="text/javascript" src="char.js"></script>
 		<script type="text/javascript" src="inventory.js"></script>
 		<script type="text/javascript" src="combat.js"></script>
-		<script type="text/javascript" src="test.js"></script>
+		<!-- <script type="text/javascript" src="test.js"></script> -->
 
 		<script type="text/javascript" src="map.js"></script>
 
 		<!-- Needed by backup.js, from 	https://github.com/douglascrockford/JSON-js/blob/master/cycle.js -->
 		<script type="text/javascript" src="cycle.js"></script> 
 		<script type="text/javascript" src="backup.js"></script>
+
+		<script type="text/javascript" src="book.js"></script>
 
 		<script type="text/javascript">
 			new Content("items", Item.get_html())

@@ -24,7 +24,7 @@ class Action {
 	constructor (name, description, difficulty, habilities, char_level, char_races, char_classes, for_all, requires_showing, targets_count, combat_modal_content, combat_modal_onload, view_functions) {
 		this.name = name
 		this.description = description
-		this.difficulty = difficulty
+		this.difficulty = difficulty - 3
 		this.habilities = habilities
 		this.char_level = char_level
 		this.char_races = char_races
